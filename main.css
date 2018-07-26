@@ -15,10 +15,16 @@ body{
   width:500px;
   height:40px;
   position:fixed;
-  top:0;
-  left:0;
   display:flex;
   border: 1px solid #d3d3d3;
+}
+#editUI{
+  top:0;
+  left:0;
+}
+#navUI{
+  bottom:1px;
+  left:0;
 }
 .prompt{
   width:200px;
@@ -45,7 +51,7 @@ body{
   background-color: grey;
   opacity: 0.7;
 }
-.uiButton,.uiLabel{
+.uiButton, .uiLabel{
   width:50px;
   display:inline-block;
   margin: 0px;

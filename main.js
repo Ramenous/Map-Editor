@@ -5,7 +5,7 @@ const DELETE_BUTTON=document.getElementById("delete");
 var NAVIGATE_SPEED=10;
 var PIXEL_PER_FT=1;
 var SELECTED_ITEMS={};
-const ID_GEN=function(){
+const UniqueIDGenerator=function(){
   var usedIDs={};
   function getID(){
     var id=Math.floor((Math.random() * 999999) + 111111);
@@ -15,10 +15,11 @@ const ID_GEN=function(){
     }
     return getID();
   }
-  this.generate(){
+  this.generate=function(){
     return getID();
   }
 }
+const ID_GEN= new UniqueIDGenerator();
 Item= function(name, width, height,desc){
   this.name=name;
   this.height=height;
@@ -31,16 +32,18 @@ Item= function(name, width, height,desc){
   this.domElement.className="item";
   this.domElement.style.width=width*PIXEL_PER_FT+"px";
   this.domElement.style.height=height*PIXEL_PER_FT+"px";
-  this.domElement.onclick=function(){
-    this.isSelected=!this.isSelected;
-    if(this.isSelected){
-      delete SELECTED_ITEMS[this.id];
-      this.domElement.style.border="1px solid black";
-      DELETE_BUTTON.disabled=false;
-    }else{
-      SELECTED_ITEMS[this.id]=this;
-      this.domElement.style.border="2px solid green";
-      DELETE_BUTTON.disabled=true;
+  this.domElement.onmousedown=(e)=>{
+    if(e.which==2){
+      this.isSelected=!this.isSelected;
+      if(this.isSelected){
+        delete SELECTED_ITEMS[this.id];
+        this.domElement.style.border="1px solid black";
+        DELETE_BUTTON.disabled=false;
+      }else{
+        SELECTED_ITEMS[this.id]=this;
+        this.domElement.style.border="2px solid green";
+        DELETE_BUTTON.disabled=true;
+      }
     }
   }
   setDraggable(this.domElement);
@@ -53,10 +56,12 @@ function setDraggable(el) {
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDrag;
-    document.onmousemove = elDrag;
+    if(e.which==0){
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDrag;
+      document.onmousemove = elDrag;
+    }
   }
   function elDrag(e) {
     //if(el.offsetTop>0 && el.offsetLeft>0 &&
@@ -93,22 +98,14 @@ document.onkeydown = function(event){
   }
 }
 
-function displayPrompt(id){
-  switch(id){
-    case "add":
-      document.getElementById("addItemPrompt").hidden=false;
-      break;
-  }
-  SCREEN.hidden=false;
-}
-
 function closePrompt(id){
   document.getElementById(id).hidden=true;
   SCREEN.hidden=true;
 }
 
-function saveMap(){
-  localStorage.setItem("map", MAP);
+function saveMap(parent){
+  var name=parent.children[0].value;
+  localStorage.setItem(name, MAP);
 }
 
 function addItem(parent){
@@ -128,8 +125,7 @@ function assignSave(el, saveData){
   }
 }
 
-function loadSave(){
-  var parent=document.getElementById("loadSavePrompt");
+function loadSave(parent){
   if(localStorage.length>0){
     parent.innerHTML="";
     for(var i=0; i<localStorage.length; i++){
@@ -146,10 +142,21 @@ function loadSave(){
   }
 }
 
-function addToScale(){
-  var el=document.getElementById("pixPerFt");
-  PIXEL_PER_FT++;
-
+function displayPrompt(id){
+  switch(id){
+    case "add":
+      document.getElementById("addItemPrompt").hidden=false;
+      break;
+    case "save":
+      document.getElementById("savePrompt").hidden=false;
+      break;
+    case "loadSave":
+      var prompt=document.getElementById("loadSavePrompt");
+      prompt.hidden=false;
+      loadSave(prompt);
+      break;
+  }
+  SCREEN.hidden=false;
 }
 
 function extractDimension(el){
