@@ -5,6 +5,27 @@
 </head>
 <body>
   <div id="screen" hidden></div>
+  <div id="editor" hidden>
+    <div id="map">
+    </div>
+    <div class="ui" id="editUI">
+      <div class="uiButton" id="reset">Reset</div>
+      <div class="uiButton" id="center">Center</div>
+      <div class="uiButton" id="add" onclick="displayPrompt(this.id);">Add</div>
+      <div class="uiButton" id="delete" onclick="deleteItem();" disabled>Delete</div>
+      <div class="uiButton" id="save" onclick="saveMap();">Save</div>
+      <div class="uiButton" id="loadSave" onclick="loadSave();">Load Save</div>
+    </div>
+    <div class="ui" id="navUI">
+      <div class="uiButton" onclick="modScale(true);" id="addScale">+</div>
+      <div class="uiButton" onclick="modScale(false);" id="delScale">-</div>
+      <div class="uiLabel" id="scale">
+        <div id="pixPerFt"></div> pixels per ft
+      </div>
+    </div>
+  </div>
+  <div id="loadSavePrompt" class="prompt" hidden>
+  </div>
   <div id="addItemPrompt" class="prompt" hidden>
     Name: <input type="text" name="name">
     Width: <input type="text" name="width">
@@ -13,28 +34,11 @@
     <button onclick="addItem(this.parentElement);">Add</button>
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
-  <div id="initializePrompt">
+  <div id="initializePrompt" class="prompt">
     Base Width (ft): <input type="text" name="baseWidth">
     Base Height (ft): <input type="text" name="baseHeight">
-    Scaling: 1ft per <input type="text" name="scaling" value="20"> pixels
+    Scaling: <input type="text" name="scaling" value="20"> pixels per ft
     <button onclick="initialize(this.parentElement);">OK</button>
-  </div>
-  <div id="editor">
-    <div id="map">
-    </div>
-    <script>
-      var elements=localStorage.getItem("map");
-      if(elements!=null){
-        document.getElementById("map").appendChild(elements.children);
-      }
-    </script>
-    <div id="ui">
-      <div class="uiButton" id="reset">Reset</div>
-      <div class="uiButton" id="center">Center</div>
-      <div class="uiButton" id="add" onclick="displayPrompt(this.id);">Add</div>
-      <div class="uiButton" id="delete">Delete</div>
-      <div class="uiButton" id="save" onclick="saveMap();">Save</div>
-    </div>
   </div>
   <script src="main.js"></script>
 </body>

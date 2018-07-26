@@ -1,17 +1,48 @@
 var MAP=document.getElementById("map");
 const SCREEN=document.getElementById("screen");
+const PIXEL=document.getElementById("pixPerFt");
+const DELETE_BUTTON=document.getElementById("delete");
 var NAVIGATE_SPEED=10;
 var PIXEL_PER_FT=1;
+var SELECTED_ITEMS={};
+const ID_GEN=function(){
+  var usedIDs={};
+  function getID(){
+    var id=Math.floor((Math.random() * 999999) + 111111);
+    if(usedIDs[id]==null){
+      usedIDs[id]=id;
+      return id;
+    }
+    return getID();
+  }
+  this.generate(){
+    return getID();
+  }
+}
 Item= function(name, width, height,desc){
   this.name=name;
   this.height=height;
   this.width=width;
   this.desc=desc;
+  this.isSelected=false;
+  this.id=ID_GEN.generate();
   this.domElement=document.createElement("DIV");
   this.domElement.innerHTML=name;
   this.domElement.className="item";
   this.domElement.style.width=width*PIXEL_PER_FT+"px";
   this.domElement.style.height=height*PIXEL_PER_FT+"px";
+  this.domElement.onclick=function(){
+    this.isSelected=!this.isSelected;
+    if(this.isSelected){
+      delete SELECTED_ITEMS[this.id];
+      this.domElement.style.border="1px solid black";
+      DELETE_BUTTON.disabled=false;
+    }else{
+      SELECTED_ITEMS[this.id]=this;
+      this.domElement.style.border="2px solid green";
+      DELETE_BUTTON.disabled=true;
+    }
+  }
   setDraggable(this.domElement);
   MAP.appendChild(this.domElement);
 }
@@ -90,13 +121,69 @@ function addItem(parent){
   closePrompt(parent.id);
 }
 
+function assignSave(el, saveData){
+  el.onclick=function(){
+    MAP.innerHTML="";
+    MAP.appendChild(saveData.children);
+  }
+}
+
+function loadSave(){
+  var parent=document.getElementById("loadSavePrompt");
+  if(localStorage.length>0){
+    parent.innerHTML="";
+    for(var i=0; i<localStorage.length; i++){
+      var el=document.createElement("DIV");
+      var key=localStorage.key(i);
+      el.innerHTML=key;
+      assignSave(el, localStorage.getItem(key));
+      parent.appendChild()
+    }
+    var cancel=document.createElement("BUTTON");
+    cancel.innerHTML="Cancel";
+  }else{
+    parent.innerHTML="No saves currently";
+  }
+}
+
+function addToScale(){
+  var el=document.getElementById("pixPerFt");
+  PIXEL_PER_FT++;
+
+}
+
+function extractDimension(el){
+ var width=parseInt(el.style.width.split("px")[0]);
+ var height=parseInt(el.style.width.split("px")[0]);
+ return {width:width, height:height};
+}
+
+function modScale(isAdd){
+  var el=document.getElementById("pixPerFt");
+  var oldScale=PIXEL_PER_FT;
+  PIXEL_PER_FT+=(isAdd)?1:-1;
+  PIXEL.innerHTML=PIXEL_PER_FT;
+  var mapDim=extractDimension(MAP);
+  MAP.style.width=(mapDim.width/oldScale)*PIXEL_PER_FT+"px";
+  MAP.style.height=(mapDim.height/oldScale)*PIXEL_PER_FT+"px";
+  var children=MAP.children;
+  for(var i=0;i<children.length; i++){
+    var child=children[i];
+    var childDim=extractDimension(child);
+    child.style.width=(child.width/oldScale)*PIXEL_PER_FT+"px";
+    child.style.height=(child.height/oldScale)*PIXEL_PER_FT+"px";
+  }
+}
+
 function initialize(parent){
   var children=parent.children;
   var baseWidth=children[0].value;
   var baseHeight=children[1].value;
   var scaling=children[2].value;
+  PIXEL.innerHTML=scaling;
   PIXEL_PER_FT=parseInt(scaling);
   MAP.style.width=(parseInt(baseWidth)*PIXEL_PER_FT)+"px";
   MAP.style.height=(parseInt(baseHeight)*PIXEL_PER_FT)+"px";
   closePrompt(parent.id);
+  document.getElementById("editor").hidden=false;
 }
