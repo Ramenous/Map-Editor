@@ -4,17 +4,38 @@
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
-
-<div id="ui">
-  <div class="uiButton" id="reset">Reset</div>
-  <div class="uiButton" id="add">Add</div>
-  <div class="uiButton" id="delete">Delete</div>
-</div>
-
-<div id="map">
-</div>
-
-<script src="main.js"></script>
-
+  <div id="screen" hidden></div>
+  <div id="addItemPrompt" class="prompt" hidden>
+    Name: <input type="text" name="name">
+    Width: <input type="text" name="width">
+    Height: <input type="text" name="height">
+    Description: <input type="text" style="height:20px;" name="description">
+    <button onclick="addItem(this.parentElement);">Add</button>
+    <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
+  </div>
+  <div id="initializePrompt">
+    Base Width (ft): <input type="text" name="baseWidth">
+    Base Height (ft): <input type="text" name="baseHeight">
+    Scaling: 1ft per <input type="text" name="scaling" value="20"> pixels
+    <button onclick="initialize(this.parentElement);">OK</button>
+  </div>
+  <div id="editor">
+    <div id="map">
+    </div>
+    <script>
+      var elements=localStorage.getItem("map");
+      if(elements!=null){
+        document.getElementById("map").appendChild(elements.children);
+      }
+    </script>
+    <div id="ui">
+      <div class="uiButton" id="reset">Reset</div>
+      <div class="uiButton" id="center">Center</div>
+      <div class="uiButton" id="add" onclick="displayPrompt(this.id);">Add</div>
+      <div class="uiButton" id="delete">Delete</div>
+      <div class="uiButton" id="save" onclick="saveMap();">Save</div>
+    </div>
+  </div>
+  <script src="main.js"></script>
 </body>
 </html>
