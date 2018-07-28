@@ -69,6 +69,8 @@ body{
   background-color: blue;
   border:1px solid black;
   text-align: center;
+  display: table-cell;
+  vertical-align: middle;
   position:absolute;
   top:0;
   left:0;

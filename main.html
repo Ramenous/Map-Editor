@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
-<body>
+<body oncontextmenu="return false;">
   <div id="screen" hidden></div>
   <div id="editor" hidden>
     <div id="map">
@@ -32,16 +32,16 @@
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
   <div id="addItemPrompt" class="prompt" hidden>
-    Name: <input type="text" name="name">
-    Width: <input type="text" name="width">
-    Height: <input type="text" name="height">
+    Name: <input type="text" name="name" value="table">
+    Width: <input type="text" name="width" value="10">
+    Height: <input type="text" name="height" value="10">
     Description: <input type="text" style="height:20px;" name="description">
     <button onclick="addItem(this.parentElement);">Add</button>
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
   <div id="initializePrompt" class="prompt">
-    Base Width (ft): <input type="text" name="baseWidth">
-    Base Height (ft): <input type="text" name="baseHeight">
+    Base Width (ft): <input type="text" name="baseWidth" value="100">
+    Base Height (ft): <input type="text" name="baseHeight" value="100">
     Scaling: <input type="text" name="scaling" value="20"> pixels per ft
     <button onclick="initialize(this.parentElement);">OK</button>
   </div>

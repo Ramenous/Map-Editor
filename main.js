@@ -5,6 +5,7 @@ const DELETE_BUTTON=document.getElementById("delete");
 var NAVIGATE_SPEED=10;
 var PIXEL_PER_FT=1;
 var SELECTED_ITEMS={};
+var ITEMS={};
 const UniqueIDGenerator=function(){
   var usedIDs={};
   function getID(){
@@ -30,22 +31,11 @@ Item= function(name, width, height,desc){
   this.domElement=document.createElement("DIV");
   this.domElement.innerHTML=name;
   this.domElement.className="item";
+  this.domElement.id=this.id;
   this.domElement.style.width=width*PIXEL_PER_FT+"px";
   this.domElement.style.height=height*PIXEL_PER_FT+"px";
-  this.domElement.onmousedown=(e)=>{
-    if(e.which==2){
-      this.isSelected=!this.isSelected;
-      if(this.isSelected){
-        delete SELECTED_ITEMS[this.id];
-        this.domElement.style.border="1px solid black";
-        DELETE_BUTTON.disabled=false;
-      }else{
-        SELECTED_ITEMS[this.id]=this;
-        this.domElement.style.border="2px solid green";
-        DELETE_BUTTON.disabled=true;
-      }
-    }
-  }
+  this.isSelected=false;
+  ITEMS[this.id]=this;
   setDraggable(this.domElement);
   MAP.appendChild(this.domElement);
 }
@@ -55,12 +45,28 @@ function setDraggable(el) {
   el.onmousedown = dragMouseDown;
   function dragMouseDown(e) {
     e = e || window.event;
-    e.preventDefault();
-    if(e.which==0){
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDrag;
-      document.onmousemove = elDrag;
+    switch(e.which){
+      case 1:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDrag;
+        document.onmousemove = elDrag;
+        break;
+      case 3:
+        var item=ITEMS[el.id];
+        item.isSelected=!item.isSelected;
+        if(item.isSelected){
+          SELECTED_ITEMS[this.id]=this;
+          item.domElement.style.border="2px solid green";
+          DELETE_BUTTON.disabled=true;
+        }else{
+          delete SELECTED_ITEMS[item.id];
+          item.domElement.style.border="1px solid black";
+          DELETE_BUTTON.disabled=false;
+        }
+        var itemAmt=Object.keys(SELECTED_ITEMS).length;
+        DELETE_BUTTON.innerHTML="Delete ("+itemAmt+")";
+        break;
     }
   }
   function elDrag(e) {
@@ -118,6 +124,16 @@ function addItem(parent){
   closePrompt(parent.id);
 }
 
+function deleteItem(){
+  for(var i in SELECTED_ITEMS){
+    var item=SELECTED_ITEMS[i];
+    MAP.removeChild(item);
+    SELECTED_ITEMS={};
+    delete ITEMS[item.id];
+  }
+    DELETE_BUTTON.innerHTML="Delete";
+}
+
 function assignSave(el, saveData){
   el.onclick=function(){
     MAP.innerHTML="";
@@ -153,6 +169,7 @@ function displayPrompt(id){
     case "loadSave":
       var prompt=document.getElementById("loadSavePrompt");
       prompt.hidden=false;
+
       loadSave(prompt);
       break;
   }
