@@ -12,7 +12,7 @@ body{
 }
 .ui{
   z-index:3;
-  width:500px;
+  width:700px;
   height:40px;
   position:fixed;
   display:flex;
@@ -30,7 +30,7 @@ body{
   width:200px;
   height:200px;
   padding:20px;
-  z-index: 2;
+  z-index: 3;
   top: 0;
   bottom: 0;
   left: 0;
@@ -52,13 +52,16 @@ body{
   opacity: 0.7;
 }
 .uiButton, .uiLabel{
-  width:50px;
+  width:100px;
   display:inline-block;
   margin: 0px;
   text-align: center;
   padding:10px;
   color:white;
   background-color: grey;
+}
+.operatorButton{
+  width:40px;
 }
 .uiButton:hover{
   color:grey;

@@ -9,18 +9,24 @@
     <div id="map">
     </div>
     <div class="ui" id="editUI">
-      <div class="uiButton" id="reset">Reset</div>
-      <div class="uiButton" id="center">Center</div>
+      <div class="uiButton" id="reset" onclick="reset();">Reset</div>
+      <div class="uiButton" id="center" onclick="center();">Center</div>
       <div class="uiButton" id="add" onclick="displayPrompt(this.id);">Add</div>
-      <div class="uiButton" id="delete" onclick="deleteItem();" disabled>Delete</div>
+      <div class="uiButton" style="width:100px;" id="delete" onclick="deleteItem();" disabled>Delete</div>
       <div class="uiButton" id="save" onclick="displayPrompt(this.id);">Save</div>
       <div class="uiButton" id="loadSave" style="width:100px;" onclick="displayPrompt(this.id);">Load Save</div>
+      <div class="uiButton" id="emptySave" style="width:100px;" onclick="localStorage.clear();">Clear Save</div>
     </div>
     <div class="ui" id="navUI">
-      <div class="uiButton" onclick="modScale(true);" id="addScale">+</div>
-      <div class="uiButton" onclick="modScale(false);" id="delScale">-</div>
-      <div class="uiLabel" style="width:100px;" id="scale">
+      <div class="uiButton operatorButton" onclick="modScale(true);" id="addScale">+</div>
+      <div class="uiButton operatorButton" onclick="modScale(false);" id="delScale">-</div>
+      <div class="uiLabel" style="width:120px;" id="scale">
         <div id="pixPerFt" style="display:inline-block;"></div> pixels per ft
+      </div>
+      <div class="uiButton operatorButton" onclick="modMoveSpd(true);" id="addSpeed">+</div>
+      <div class="uiButton operatorButton" onclick="modMoveSpd(false);" id="delSpeed">-</div>
+      <div class="uiLabel" style="width:120px;" id="speed">
+        Move by <div id="speedAmt" style="display:inline-block;"></div> pixels
       </div>
     </div>
   </div>
@@ -40,8 +46,8 @@
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
   <div id="initializePrompt" class="prompt">
-    Base Width (ft): <input type="text" name="baseWidth" value="100">
-    Base Height (ft): <input type="text" name="baseHeight" value="100">
+    Base Width (ft): <input type="text" name="baseWidth" value="20">
+    Base Height (ft): <input type="text" name="baseHeight" value="20">
     Scaling: <input type="text" name="scaling" value="20"> pixels per ft
     <button onclick="initialize(this.parentElement);">OK</button>
   </div>
