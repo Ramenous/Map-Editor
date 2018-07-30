@@ -131,6 +131,7 @@ function setDraggable(el, itemObj) {
           }else{
             ITEM_LIST.hidden=true;
           }
+          //
           INFO_BOX.hidden=true;
           item.domElement.style.border="1px solid black";
           DELETE_BUTTON.disabled=true;
