@@ -28,21 +28,39 @@ body{
   left:0;
 }
 #itemListUI{
-  border:1px solid black;
   position: fixed;
-  width:150px;
+  width:212px;
   top:0;
   right:0;
+}
+#itemList{
+  display: block;
+  width:inherit;
+  position: fixed;
+  top:40px;
+  border:1px solid black;
+}
+#infoBox{
+  width:200px;
+  padding:10px;
+  z-index: 6;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  position: fixed;
+  background-color: white;
+  border:1px solid black;
 }
 .prompt{
   width:200px;
   height:200px;
   padding:20px;
-  z-index: 3;
+  z-index: 6;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  text-align: center;
   margin: auto;
   position: absolute;
   border-radius: 10px;
@@ -50,7 +68,7 @@ body{
   background-color: white;
 }
 #screen{
-  z-index:1;
+  z-index:5;
   top:0px;
   left:0px;
   position:fixed;
@@ -86,6 +104,36 @@ body{
 .uiButton:hover{
   color:grey;
   background-color: white;
+}
+.save{
+  display: table;
+  border:1px solid black;
+  border-radius: 4px;
+  width: inherit;
+  height:20px;
+}
+.saveName{
+  overflow:hidden;
+  max-width: 100px;
+  width:100px;
+}
+.saveName{
+  display:table-cell;
+  vertical-align: middle;
+}
+.openSave, .delSave{
+  border-radius: 4px;
+  margin-left: 4px;
+  border:none;
+  color: white;
+  background-color: grey;
+}
+.openSave:hover, .delSave:hover{
+  color: grey;
+  background-color: white;
+}
+.listItem{
+
 }
 .item{
   z-index:3;

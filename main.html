@@ -12,7 +12,7 @@
       <div class="uiButton" id="reset" onclick="reset();">Reset</div>
       <div class="uiButton" id="center" onclick="center();">Center</div>
       <div class="uiButton" id="add" onclick="displayPrompt(this.id);">Add</div>
-      <div class="uiButton longButton" id="delete" onclick="deleteItem();" disabled>Delete</div>
+      <div class="uiButton" style="width:80px;" id="delete" onclick="deleteItem();" disabled>Delete</div>
       <div class="uiButton" id="save" onclick="displayPrompt(this.id);">Save</div>
       <div class="uiButton longButton" id="loadSave" onclick="displayPrompt(this.id);">Load Save</div>
       <div class="uiButton longButton" id="emptySave" onclick="localStorage.clear();">Clear Save</div>
@@ -31,10 +31,10 @@
     </div>
     <div id="itemListUI">
       <div class="ui">
-        <div class="uiLabel shortLabel" id="items">Items</div>
-        <div class="uiButton" id="expandCollapse">Expand</div>
+        <div class="uiLabel longLabel" id="items">Selected Items</div>
+        <div class="uiButton" id="showHideList" onclick="showHideItemList();">Expand</div>
       </div>
-      <div id="itemList" style="width:inherit"></div>
+      <div id="itemList" hidden style="width:inherit"></div>
     </div>
   </div>
   <div id="loadSavePrompt" class="prompt" hidden>
@@ -44,11 +44,22 @@
     <button onclick="save(this.parentElement);">Save</button>
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
-  <div id="addItemPrompt" class="prompt" hidden>
+  <div id="infoBox" hidden>
+    <button id="showHideFields" onclick="showHideInfoFields();">Hide</button>
+    <div id="infoFields">
+      ID: <div id="itemID"></div>
+      Name: <input type="text" name="name" value="table">
+      Width: <input type="text" name="width" value="10">
+      Height: <input type="text" name="height" value="10">
+      Description: <input type="text" style="height:40px;" name="description">
+      <button onclick="updateItemInfo(this.parentElement);">Update</button>
+    </div>
+  </div>
+  <div id="addItemPrompt" style="width:250px;" class="prompt" hidden>
     Name: <input type="text" name="name" value="table">
     Width: <input type="text" name="width" value="10">
     Height: <input type="text" name="height" value="10">
-    Description: <input type="text" style="height:20px;" name="description">
+    Description: <input type="text" style="height:40px;" name="description">
     <button onclick="addItem(this.parentElement);">Add</button>
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>

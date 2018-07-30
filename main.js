@@ -2,10 +2,16 @@ var MAP=document.getElementById("map");
 const SCREEN=document.getElementById("screen");
 const PIXEL=document.getElementById("pixPerFt");
 const SPEED=document.getElementById("speedAmt");
+const ITEM_ID=document.getElementById("itemID");
+const ITEM_LIST=document.getElementById("itemList");
 const DELETE_BUTTON=document.getElementById("delete");
+const INFO_BOX=document.getElementById("infoBox");
+const INFO_FIELDS=document.getElementById("infoFields");
 var NAVIGATE_SPEED=10;
 var PIXEL_PER_FT=1;
 var SELECTED_ITEMS={};
+var SHOW_ITEM_LIST=false;
+var SHOW_INFO_FIELDS=true;
 var ITEMS={};
 const UniqueIDGenerator=function(){
   var usedIDs={};
@@ -37,14 +43,14 @@ function createItemEl(name,id,width,height,x,y){
   nameEl.style.verticalAlign="middle";
   var widthEl=document.createElement("DIV");
   widthEl.style.top="0px";
-  widthEl.style.left=width/2+"px";
+  widthEl.style.left=(width*PIXEL_PER_FT)/2+"px";
   widthEl.style.position="absolute";
-  widthEl.innerHTML=width;
+  widthEl.innerHTML=width+"ft";
   var heightEl=document.createElement("DIV");
   heightEl.style.left="0px";
-  heightEl.style.top=height/2+"px";
+  heightEl.style.top=(height*PIXEL_PER_FT)/2+"px";
   heightEl.style.position="absolute";
-  heightEl.innerHTML=height;
+  heightEl.innerHTML=height+"ft";
   el.appendChild(nameEl);
   el.appendChild(widthEl);
   el.appendChild(heightEl);
@@ -68,6 +74,27 @@ Item= function(name, width, height,desc,x,y){
   MAP.appendChild(this.domElement);
 }
 
+function assignListFunc(el, itemObj){
+  el.className="listItem";
+  el.innerHTML=itemObj.name;
+  el.id="listItem"+itemObj.id;
+  var values=[
+    itemObj.id,
+    itemObj.name,
+    itemObj.width,
+    itemObj.height,
+    itemObj.desc
+  ];
+  el.onclick=function(){
+    INFO_BOX.hidden=false;
+    var children=INFO_FIELDS.children;
+    children[0].innerHTML=values[0];
+    for(var i=1; i<children.length; i++){
+      children[i].value=values[i];
+    }
+  }
+}
+
 function setDraggable(el, itemObj) {
   var pos1 = 10, pos2 = 10, pos3 = 10, pos4 = 10;
   el.onmousedown = dragMouseDown;
@@ -81,16 +108,32 @@ function setDraggable(el, itemObj) {
         document.onmousemove = elDrag;
         break;
       case 3:
-        var item=ITEMS[el.id];
+        var item=ITEMS[itemObj.id];
         item.isSelected=!item.isSelected;
         if(item.isSelected){
-          SELECTED_ITEMS[this.id]=this;
+          SELECTED_ITEMS[this.id]=item;
+          var el=document.createElement("DIV");
+          assignListFunc(el,item);
+          ITEM_LIST.appendChild(el);
+          if(SHOW_ITEM_LIST){
+            ITEM_LIST.hidden=false;
+          }else{
+            ITEM_LIST.hidden=true;
+          }
           item.domElement.style.border="2px solid green";
-          DELETE_BUTTON.disabled=true;
+          DELETE_BUTTON.disabled=false;
         }else{
           delete SELECTED_ITEMS[item.id];
+          var listItem=document.getElementById("listItem"+itemObj.id);
+          ITEM_LIST.removeChild(listItem);
+          if(SHOW_ITEM_LIST){
+            ITEM_LIST.hidden=false;
+          }else{
+            ITEM_LIST.hidden=true;
+          }
+          INFO_BOX.hidden=true;
           item.domElement.style.border="1px solid black";
-          DELETE_BUTTON.disabled=false;
+          DELETE_BUTTON.disabled=true;
         }
         var itemAmt=Object.keys(SELECTED_ITEMS).length;
         DELETE_BUTTON.innerHTML="Delete ("+itemAmt+")";
@@ -124,12 +167,16 @@ document.onkeydown = function(event){
   switch(event.keyCode){
     case 87:
       MAP.style.top=MAP.offsetTop-NAVIGATE_SPEED +"px";
+      break;
     case 65:
       MAP.style.left=MAP.offsetLeft-NAVIGATE_SPEED +"px";
+      break;
     case 83:
       MAP.style.top=MAP.offsetTop+NAVIGATE_SPEED +"px";
+      break;
     case 68:
       MAP.style.left=MAP.offsetLeft+NAVIGATE_SPEED + "px";
+      break;
   }
 }
 
@@ -160,11 +207,17 @@ function deleteItem(){
     SELECTED_ITEMS={};
     delete ITEMS[item.id];
   }
-    DELETE_BUTTON.innerHTML="Delete";
+  DELETE_BUTTON.innerHTML="Delete";
 }
 
-function assignSave(el, saveData){
-  el.onclick=function(){
+function assignSave(parent,el, key){
+  var saveData=localStorage.getItem(key);
+  var saveName=document.createElement("DIV");
+  saveName.className="saveName";
+  saveName.innerHTML=key;
+  var open=document.createElement("BUTTON");
+  open.className="openSave";
+  open.onclick=function(){
     MAP.innerHTML="";
     ITEMS={};
     var items=JSON.parse(saveData);
@@ -173,20 +226,37 @@ function assignSave(el, saveData){
       new Item(item.name, item.width, item.height, item.desc,item.x,item.y);
     }
   }
+  open.innerHTML="open";
+  var delSave=document.createElement("BUTTON");
+  delSave.className="delSave";
+  delSave.onclick=function(){
+    parent.removeChild(el);
+    delete localStorage[key];
+  }
+  delSave.innerHTML="delete";
+  el.appendChild(saveName);
+  el.appendChild(open);
+  el.appendChild(delSave);
 }
 
 function loadSave(parent){
   if(localStorage.length>0){
     parent.innerHTML="";
+    parent.style.overflowY="scroll";
+    parent.style.overflowX="hidden";
     for(var i=0; i<localStorage.length; i++){
       var el=document.createElement("DIV");
+      el.className="save";
       var key=localStorage.key(i);
-      el.innerHTML=key;
-      assignSave(el, localStorage.getItem(key));
+      assignSave(parent,el, key);
       parent.appendChild(el);
     }
     var cancel=document.createElement("BUTTON");
     cancel.innerHTML="Cancel";
+    cancel.onclick=function(){
+      closePrompt(parent.id);
+    }
+    parent.appendChild(cancel);
   }else{
     parent.innerHTML="No saves currently";
   }
@@ -244,6 +314,48 @@ function modMoveSpd(isAdd){
 
 function reset(){
   MAP.innerHTML="";
+}
+
+function updateItemInfo(parent){
+  var itemID=document.getElementById("itemID").innerHTML;
+  var item=ITEMS[itemID];
+  var children=parent.children;
+  var updatedName=children[1].value;
+  var updatedWidth=children[2].value;
+  var updatedHeight=children[3].value;
+  var updatedDesc=children[4].value;
+  item.name=updatedName;
+  item.width=updatedWidth;
+  item.height=updatedHeight;
+  item.desc=updatedDesc;
+  var el=item.domElement;
+  el.innerHTML=updatedName;
+  el.style.width=parseInt(updatedWidth)*PIXEL_PER_FT+"px";
+  el.style.height=parseInt(updatedHeight)*PIXEL_PER_FT+"px";
+}
+
+function showHideItemList(){
+  SHOW_ITEM_LIST=!SHOW_ITEM_LIST;
+  var button=document.getElementById("showHideList");
+  if(SHOW_ITEM_LIST){
+    ITEM_LIST.hidden=false;
+    button.innerHTML="Hide";
+  }else{
+    ITEM_LIST.hidden=true;
+    button.innerHTML="Show";
+  }
+}
+
+function showHideInfoFields(){
+  SHOW_INFO_FIELDS=!SHOW_INFO_FIELDS;
+  var button=document.getElementById("showHideFields");
+  if(SHOW_INFO_FIELDS){
+    INFO_FIELDS.hidden=false;
+    button.innerHTML="Hide";
+  }else{
+    INFO_FIELDS.hidden=true;
+    button.innerHTML="Show";
+  }
 }
 
 function center(){
