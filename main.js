@@ -33,14 +33,18 @@ function createItemEl(name,id,width,height,x,y){
   el.style.left=y+"px";
   var nameEl=document.createElement("DIV");
   nameEl.innerHTML=name;
+  nameEl.style.display="table-cell";
+  nameEl.style.verticalAlign="middle";
   var widthEl=document.createElement("DIV");
   widthEl.style.top="0px";
   widthEl.style.left=width/2+"px";
   widthEl.style.position="absolute";
+  widthEl.innerHTML=width;
   var heightEl=document.createElement("DIV");
   heightEl.style.left="0px";
   heightEl.style.top=height/2+"px";
-  widthEl.style.position="absolute";
+  heightEl.style.position="absolute";
+  heightEl.innerHTML=height;
   el.appendChild(nameEl);
   el.appendChild(widthEl);
   el.appendChild(heightEl);
@@ -120,13 +124,10 @@ document.onkeydown = function(event){
   switch(event.keyCode){
     case 87:
       MAP.style.top=MAP.offsetTop-NAVIGATE_SPEED +"px";
-      break;
     case 65:
       MAP.style.left=MAP.offsetLeft-NAVIGATE_SPEED +"px";
-      break;
     case 83:
       MAP.style.top=MAP.offsetTop+NAVIGATE_SPEED +"px";
-      break;
     case 68:
       MAP.style.left=MAP.offsetLeft+NAVIGATE_SPEED + "px";
   }

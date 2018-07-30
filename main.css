@@ -12,19 +12,27 @@ body{
 }
 .ui{
   z-index:3;
-  width:700px;
   height:40px;
   position:fixed;
   display:flex;
   border: 1px solid #d3d3d3;
 }
 #editUI{
+  width:700px;
   top:0;
   left:0;
 }
 #navUI{
+  width:520px;
   bottom:1px;
   left:0;
+}
+#itemListUI{
+  border:1px solid black;
+  position: fixed;
+  width:150px;
+  top:0;
+  right:0;
 }
 .prompt{
   width:200px;
@@ -52,7 +60,7 @@ body{
   opacity: 0.7;
 }
 .uiButton, .uiLabel{
-  width:100px;
+  width:50px;
   display:inline-block;
   margin: 0px;
   text-align: center;
@@ -63,6 +71,18 @@ body{
 .operatorButton{
   width:40px;
 }
+.longLabel{
+  width:120px;
+}
+.shortLabel{
+  width:80px;
+}
+.longButton{
+  width:100px;
+}
+.counter{
+  display:inline-block;
+}
 .uiButton:hover{
   color:grey;
   background-color: white;
@@ -72,8 +92,7 @@ body{
   background-color: blue;
   border:1px solid black;
   text-align: center;
-  display: table-cell;
-  vertical-align: middle;
+  display: table;
   position:absolute;
   top:0;
   left:0;
