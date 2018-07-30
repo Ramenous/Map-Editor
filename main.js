@@ -13,6 +13,18 @@ var SELECTED_ITEMS={};
 var SHOW_ITEM_LIST=false;
 var SHOW_INFO_FIELDS=true;
 var ITEMS={};
+var COLORS=[
+  "#99cc00",
+  "#999966",
+  "#cc00cc",
+  "#99ffcc",
+  "#669999",
+  "#6699ff",
+  "#ffff66",
+  "#ff5050",
+  "#ffffff",
+  "#ffcc99",
+];
 const UniqueIDGenerator=function(){
   var usedIDs={};
   function getID(){
@@ -29,14 +41,19 @@ const UniqueIDGenerator=function(){
 }
 const ID_GEN= new UniqueIDGenerator();
 
-function createItemEl(name,id,width,height,x,y){
+function createItemEl(name,id,width,height,color,x,y){
   var el=document.createElement("DIV");
   el.className="item";
   el.id=id;
-  el.style.width=width*PIXEL_PER_FT+"px";
-  el.style.height=height*PIXEL_PER_FT+"px";
+  var domWidth=width*PIXEL_PER_FT+"px";
+  var domHeight=height*PIXEL_PER_FT+"px";
+  el.style.width=domWidth;
+  el.style.height=domHeight;
+  el.style.maxWidth=domWidth;
+  el.style.maxHeight=domHeight;
   el.style.top=x+"px";
   el.style.left=y+"px";
+  el.style.backgroundColor=color;
   var nameEl=document.createElement("DIV");
   nameEl.innerHTML=name;
   nameEl.style.display="table-cell";
@@ -57,19 +74,36 @@ function createItemEl(name,id,width,height,x,y){
   return el;
 }
 
-Item= function(name, width, height,desc,x,y){
+Item= function(name, width, height,desc, color,x,y){
   this.name=name;
   this.height=parseInt(height);
   this.width=parseInt(width);
+  this.color=(color==null)?COLORS[Math.floor((Math.random() * COLORS.length-1))]:color;
   this.desc=desc;
   this.isSelected=false;
   this.id=ID_GEN.generate();
   var baseDim=extractDimension(MAP);
   this.x=(x==null)?(baseDim.width/2)-(this.width/2):x;
   this.y=(y==null)?(baseDim.height/2)-(this.height/2):y;
-  this.domElement=createItemEl(name,this.id,this.width,this.height,this.x,this.y);
+  this.domElement=createItemEl(name,this.id,this.width,this.height,this.color,this.x,this.y);
   this.isSelected=false;
   ITEMS[this.id]=this;
+  this.updateItemInfo=(name, width, height, desc)=>{
+    alert("updating");
+    this.name=name;
+    this.width=width;
+    this.height=height;
+    this.desc=desc;
+    var el=this.domElement;
+    el.children[0].innerHTML=name;
+    var domWidth=parseInt(width)*PIXEL_PER_FT+"px";
+    var domHeight=parseInt(height)*PIXEL_PER_FT+"px";
+    el.style.width=domWidth;
+    el.style.height=domHeight;
+    el.style.maxWidth=domWidth;
+    el.style.maxHeight=domHeight;
+
+  }
   setDraggable(this.domElement, this);
   MAP.appendChild(this.domElement);
 }
@@ -115,29 +149,18 @@ function setDraggable(el, itemObj) {
           var el=document.createElement("DIV");
           assignListFunc(el,item);
           ITEM_LIST.appendChild(el);
-          if(SHOW_ITEM_LIST){
-            ITEM_LIST.hidden=false;
-          }else{
-            ITEM_LIST.hidden=true;
-          }
           item.domElement.style.border="2px solid green";
           DELETE_BUTTON.disabled=false;
         }else{
           delete SELECTED_ITEMS[item.id];
           var listItem=document.getElementById("listItem"+itemObj.id);
           ITEM_LIST.removeChild(listItem);
-          if(SHOW_ITEM_LIST){
-            ITEM_LIST.hidden=false;
-          }else{
-            ITEM_LIST.hidden=true;
-          }
-          //
           INFO_BOX.hidden=true;
           item.domElement.style.border="1px solid black";
           DELETE_BUTTON.disabled=true;
         }
         var itemAmt=Object.keys(SELECTED_ITEMS).length;
-        DELETE_BUTTON.innerHTML="Delete ("+itemAmt+")";
+        DELETE_BUTTON.innerHTML=(itemAmt==0)?"":"Delete ("+itemAmt+")";
         break;
     }
   }
@@ -166,16 +189,16 @@ function setDraggable(el, itemObj) {
 
 document.onkeydown = function(event){
   switch(event.keyCode){
-    case 87:
+    case 38:
       MAP.style.top=MAP.offsetTop-NAVIGATE_SPEED +"px";
       break;
-    case 65:
+    case 37:
       MAP.style.left=MAP.offsetLeft-NAVIGATE_SPEED +"px";
       break;
-    case 83:
+    case 40:
       MAP.style.top=MAP.offsetTop+NAVIGATE_SPEED +"px";
       break;
-    case 68:
+    case 39:
       MAP.style.left=MAP.offsetLeft+NAVIGATE_SPEED + "px";
       break;
   }
@@ -204,7 +227,7 @@ function addItem(parent){
 function deleteItem(){
   for(var i in SELECTED_ITEMS){
     var item=SELECTED_ITEMS[i];
-    MAP.removeChild(item);
+    MAP.removeChild(item.domElement);
     SELECTED_ITEMS={};
     delete ITEMS[item.id];
   }
@@ -224,7 +247,7 @@ function assignSave(parent,el, key){
     var items=JSON.parse(saveData);
     for(var i in items){
       var item=items[i];
-      new Item(item.name, item.width, item.height, item.desc,item.x,item.y);
+      new Item(item.name, item.width, item.height, item.color,item.desc,item.x,item.y);
     }
   }
   open.innerHTML="open";
@@ -325,14 +348,7 @@ function updateItemInfo(parent){
   var updatedWidth=children[2].value;
   var updatedHeight=children[3].value;
   var updatedDesc=children[4].value;
-  item.name=updatedName;
-  item.width=updatedWidth;
-  item.height=updatedHeight;
-  item.desc=updatedDesc;
-  var el=item.domElement;
-  el.innerHTML=updatedName;
-  el.style.width=parseInt(updatedWidth)*PIXEL_PER_FT+"px";
-  el.style.height=parseInt(updatedHeight)*PIXEL_PER_FT+"px";
+  item.updateItemInfo(updatedName,updatedWidth,updatedHeight,updatedDesc);
 }
 
 function showHideItemList(){
@@ -340,9 +356,11 @@ function showHideItemList(){
   var button=document.getElementById("showHideList");
   if(SHOW_ITEM_LIST){
     ITEM_LIST.hidden=false;
+    //ITEM_LIST.style.display="initial";
     button.innerHTML="Hide";
   }else{
     ITEM_LIST.hidden=true;
+    //ITEM_LIST.style.display="none";
     button.innerHTML="Show";
   }
 }

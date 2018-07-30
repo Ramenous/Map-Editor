@@ -34,7 +34,6 @@ body{
   right:0;
 }
 #itemList{
-  display: block;
   width:inherit;
   position: fixed;
   top:40px;
@@ -60,7 +59,6 @@ body{
   bottom: 0;
   left: 0;
   right: 0;
-  text-align: center;
   margin: auto;
   position: absolute;
   border-radius: 10px;
