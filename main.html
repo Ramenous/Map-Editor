@@ -56,12 +56,12 @@
     </div>
   </div>
   <div id="addItemPrompt" style="width:250px;" class="prompt" hidden>
-    Name: <input type="text" name="name" value="table">
-    Width (ft): <input type="text" name="width" value="10">
-    Length (ft): <input type="text" name="height" value="10">
-    Description: <input type="text" name="description">
-    <button onclick="addItem(this.parentElement);">Add</button>
-    <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
+    Name: <br> <input type="text" name="name" value="table"> <br>
+    Width (ft): <br> <input type="text" name="width" value="10"> <br>
+    Length (ft): <br> <input type="text" name="height" value="10"> <br>
+    Description: <br> <input type="text" name="description"> <br>
+    <button style="text-align:center;" onclick="addItem(this.parentElement);">Add</button>
+    <button  style="text-align:center;"onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
   <div id="initializePrompt" class="prompt">
     Base Width (ft): <input type="text" name="baseWidth" value="20">

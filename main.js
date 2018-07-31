@@ -23,7 +23,7 @@ var COLORS=[
   "#ffff66",
   "#ff5050",
   "#ffffff",
-  "#ffcc99",
+  "#ffcc99"
 ];
 const UniqueIDGenerator=function(){
   var usedIDs={};
@@ -89,19 +89,22 @@ Item= function(name, width, height,desc, color,x,y){
   this.isSelected=false;
   ITEMS[this.id]=this;
   this.updateItemInfo=(name, width, height, desc)=>{
-    alert("updating");
     this.name=name;
     this.width=width;
     this.height=height;
     this.desc=desc;
     var el=this.domElement;
+    var domWidth=parseInt(width)*PIXEL_PER_FT
+    var domHeight=parseInt(height)*PIXEL_PER_FT
     el.children[0].innerHTML=name;
-    var domWidth=parseInt(width)*PIXEL_PER_FT+"px";
-    var domHeight=parseInt(height)*PIXEL_PER_FT+"px";
-    el.style.width=domWidth;
-    el.style.height=domHeight;
-    el.style.maxWidth=domWidth;
-    el.style.maxHeight=domHeight;
+    el.children[1].style.left=domWidth/2;
+    el.children[1].innerHTML=width+"ft";
+    el.children[2].style.top=domHeight/2;
+    el.children[2].innerHTML=height+"ft";
+    el.style.width=domWidth+"px";
+    el.style.height=domHeight+"px";
+    el.style.maxWidth=domWidth+"px";
+    el.style.maxHeight=domHeight+"px";
 
   }
   setDraggable(this.domElement, this);
@@ -110,7 +113,7 @@ Item= function(name, width, height,desc, color,x,y){
 
 function assignListFunc(el, itemObj){
   el.className="listItem";
-  el.innerHTML=itemObj.name;
+  el.innerHTML="#"+itemObj.id+" - "+itemObj.name;
   el.id="listItem"+itemObj.id;
   var values=[
     itemObj.id,
@@ -160,7 +163,7 @@ function setDraggable(el, itemObj) {
           DELETE_BUTTON.disabled=true;
         }
         var itemAmt=Object.keys(SELECTED_ITEMS).length;
-        DELETE_BUTTON.innerHTML=(itemAmt==0)?"":"Delete ("+itemAmt+")";
+        DELETE_BUTTON.innerHTML=(itemAmt==0)?"Delete":"Delete ("+itemAmt+")";
         break;
     }
   }
@@ -214,6 +217,30 @@ function saveMap(parent){
   localStorage.setItem(name, MAP);
 }
 
+function getItemFormValues(formEl){
+  var children=formEl.children;
+  var formObj={};
+  for(var i=0; i<children.length; i++){
+    var child=children[i];
+    var val=child.value;
+    switch(child.name){
+      case "name":
+        formObj.name=val;
+        break;
+      case "width":
+        formObj.width=val;
+        break;
+      case "height":
+        formObj.height=val;
+        break;
+      case "description"
+        formObj.desc=val;
+        break;
+    }
+  }
+  return formObj;
+}
+
 function addItem(parent){
   var children=parent.children;
   var name=children[0].value;
@@ -228,9 +255,9 @@ function deleteItem(){
   for(var i in SELECTED_ITEMS){
     var item=SELECTED_ITEMS[i];
     MAP.removeChild(item.domElement);
-    SELECTED_ITEMS={};
     delete ITEMS[item.id];
   }
+  SELECTED_ITEMS={};
   DELETE_BUTTON.innerHTML="Delete";
 }
 
