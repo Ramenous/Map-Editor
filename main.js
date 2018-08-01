@@ -6,12 +6,12 @@ const ITEM_ID=document.getElementById("itemID");
 const ITEM_LIST=document.getElementById("itemList");
 const DELETE_BUTTON=document.getElementById("delete");
 const INFO_BOX=document.getElementById("infoBox");
-const INFO_FIELDS=document.getElementById("infoFields");
+const ITEM_INFO_FORM=document.getElementById("itemInfoForm");
 var NAVIGATE_SPEED=10;
 var PIXEL_PER_FT=1;
 var SELECTED_ITEMS={};
 var SHOW_ITEM_LIST=false;
-var SHOW_INFO_FIELDS=true;
+var SHOW_ITEM_INFO_FORM=true;
 var ITEMS={};
 var COLORS=[
   "#99cc00",
@@ -124,8 +124,8 @@ function assignListFunc(el, itemObj){
   ];
   el.onclick=function(){
     INFO_BOX.hidden=false;
-    var children=INFO_FIELDS.children;
-    children[0].innerHTML=values[0];
+    var children=ITEM_INFO_FORM.children;
+    ITEM_ID.innerHTML="ID: "+values[0];
     for(var i=1; i<children.length; i++){
       children[i].value=values[i];
     }
@@ -233,7 +233,7 @@ function getItemFormValues(formEl){
       case "height":
         formObj.height=val;
         break;
-      case "description"
+      case "description":
         formObj.desc=val;
         break;
     }
@@ -242,13 +242,14 @@ function getItemFormValues(formEl){
 }
 
 function addItem(parent){
-  var children=parent.children;
+  var grandParent=parent.parentElement;
+  var children=grandParent.children;
   var name=children[0].value;
   var width=children[1].value;
   var height=children[2].value;
   var desc=children[3].value;
   new Item(name,width,height,desc);
-  closePrompt(parent.id);
+  closePrompt(grandParent.parentElement.id);
 }
 
 function deleteItem(){
@@ -368,7 +369,7 @@ function reset(){
 }
 
 function updateItemInfo(parent){
-  var itemID=document.getElementById("itemID").innerHTML;
+  var itemID=ITEM_ID.innerHTML;
   var item=ITEMS[itemID];
   var children=parent.children;
   var updatedName=children[1].value;
@@ -393,13 +394,13 @@ function showHideItemList(){
 }
 
 function showHideInfoFields(){
-  SHOW_INFO_FIELDS=!SHOW_INFO_FIELDS;
+  SHOW_ITEM_INFO_FORM=!SHOW_ITEM_INFO_FORM;
   var button=document.getElementById("showHideFields");
-  if(SHOW_INFO_FIELDS){
-    INFO_FIELDS.hidden=false;
+  if(SHOW_ITEM_INFO_FORM){
+    ITEM_INFO_FORM.hidden=false;
     button.innerHTML="Hide";
   }else{
-    INFO_FIELDS.hidden=true;
+    ITEM_INFO_FORM.hidden=true;
     button.innerHTML="Show";
   }
 }
@@ -422,6 +423,6 @@ function initialize(parent){
   PIXEL_PER_FT=parseInt(scaling);
   MAP.style.width=(parseInt(baseWidth)*PIXEL_PER_FT)+"px";
   MAP.style.height=(parseInt(baseHeight)*PIXEL_PER_FT)+"px";
-  closePrompt(parent.id);
+  closePrompt(parent.parentElement.id);
   document.getElementById("editor").hidden=false;
 }

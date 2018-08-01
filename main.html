@@ -45,29 +45,35 @@
     <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
   </div>
   <div id="infoBox" hidden>
+    <div id="itemID"></div>
     <button id="showHideFields" onclick="showHideInfoFields();">Hide</button>
-    <div id="infoFields">
-      ID: <div id="itemID"></div>
+    <div class="formContainer" id="itemInfoForm">
       Name: <input type="text" name="name" value="table">
       Width (ft): <input type="text" name="width" value="10">
       Length (ft): <input type="text" name="height" value="10">
-      Description: <input type="text" name="description">
+      Description: <textarea name="description" cols="17" rows="3"></textarea>
       <button onclick="updateItemInfo(this.parentElement);">Update</button>
     </div>
   </div>
-  <div id="addItemPrompt" style="width:250px;" class="prompt" hidden>
-    Name: <br> <input type="text" name="name" value="table"> <br>
-    Width (ft): <br> <input type="text" name="width" value="10"> <br>
-    Length (ft): <br> <input type="text" name="height" value="10"> <br>
-    Description: <br> <input type="text" name="description"> <br>
-    <button style="text-align:center;" onclick="addItem(this.parentElement);">Add</button>
-    <button  style="text-align:center;"onclick="closePrompt(this.parentElement.id);">Cancel</button>
+  <div id="addItemPrompt" class="prompt" hidden>
+    <div class="formContainer" id="addItemForm">
+      Name: <input type="text" name="name" value="table">
+      Width (ft): <input type="text" name="width" value="10">
+      Length (ft): <input type="text" name="height" value="10">
+      Description: <textarea name="description" cols="17" rows="3"></textarea>
+      <div class="buttonContainer">
+        <button class="formButton" onclick="addItem(this.parentElement);">Add</button>
+        <button class="formButton" onclick="closePrompt(this.parentElement.parentElement.parentElement.id);">Cancel</button>
+      </div>
+    </div>
   </div>
   <div id="initializePrompt" class="prompt">
-    Base Width (ft): <input type="text" name="baseWidth" value="20">
-    Base Length (ft): <input type="text" name="baseHeight" value="20">
-    Scaling: <input type="text" name="scaling" value="20"> pixels per ft
-    <button onclick="initialize(this.parentElement);">OK</button>
+    <div class="formContainer" id="initializeForm">
+      Base Width (ft): <input type="text" name="baseWidth" value="20">
+      Base Length (ft): <input type="text" name="baseHeight" value="20">
+      Scaling (Pixel/ft):<input type="text" name="scaling" value="20">
+      <button class="formButton singleButton" onclick="initialize(this.parentElement);">OK</button>
+    </div>
   </div>
   <script src="main.js"></script>
 </body>

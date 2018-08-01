@@ -1,6 +1,70 @@
 body{
+  font-family: sans-serif;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+input{
+  margin-bottom: 10px;
+  margin-top:5px;
+  border:none;
+  font-size: 14px;
+  width:140px;
+  border-bottom: 1px solid #d3d3d3;
+}
+input:focus{
+  border-bottom: 1px solid #66ccff;
+  outline: none;
+}
+textarea{
+  margin-bottom: 5px;
+}
+textarea:focus{
+  border: 1px solid #66ccff;
+  outline: none;
+}
+.formContainer{
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+.formButton{
+  font-size: 16px;
+  width:65px;
+  height:30px;
+  background-color: #999999;
+  border: 1px solid #808080;
+  color:white;
+}
+.buttonContainer, .singleButton{
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+.buttonContainer{
+  text-align: center;
+  width:143px;
+  height: 20px;
+}
+.formButton:hover{
+  background-color: white;
+  color:#999999;
+}
+#addItemForm{
+  width:145px;
+  height:260px;
+}
+#initializeForm{
+  width:140px;
+  height:180px;
+}
+#itemInfoForm{
+  border:1px solid black;
+  width:140px;
+  height:240px;
 }
 #map {
   position: absolute;
@@ -15,7 +79,7 @@ body{
   height:40px;
   position:fixed;
   display:flex;
-  border: 1px solid #d3d3d3;
+  border: 1px solid #808080;
 }
 #editUI{
   width:700px;
@@ -29,7 +93,7 @@ body{
 }
 #itemListUI{
   position: fixed;
-  width:212px;
+  width:222px;
   top:0;
   right:0;
 }
@@ -40,11 +104,11 @@ body{
 }
 #infoBox{
   width:200px;
+  height:300px;
   padding:10px;
   z-index: 6;
   bottom: 0;
   right: 0;
-  text-align: center;
   position: fixed;
   background-color: white;
   border:1px solid black;
@@ -64,6 +128,9 @@ body{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background-color: white;
 }
+#addItemPrompt{
+  height:270px;
+}
 #screen{
   z-index:5;
   top:0px;
@@ -81,13 +148,13 @@ body{
   text-align: center;
   padding:10px;
   color:white;
-  background-color: grey;
+  background-color: #999999;
 }
 .operatorButton{
   width:40px;
 }
 .longLabel{
-  width:120px;
+  width:130px;
 }
 .shortLabel{
   width:80px;
@@ -99,7 +166,7 @@ body{
   display:inline-block;
 }
 .uiButton:hover{
-  color:grey;
+  color:#999999;
   background-color: white;
 }
 .save{
