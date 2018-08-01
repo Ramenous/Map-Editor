@@ -384,11 +384,9 @@ function showHideItemList(){
   var button=document.getElementById("showHideList");
   if(SHOW_ITEM_LIST){
     ITEM_LIST.hidden=false;
-    //ITEM_LIST.style.display="initial";
     button.innerHTML="Hide";
   }else{
     ITEM_LIST.hidden=true;
-    //ITEM_LIST.style.display="none";
     button.innerHTML="Show";
   }
 }
@@ -397,9 +395,11 @@ function showHideInfoFields(){
   SHOW_ITEM_INFO_FORM=!SHOW_ITEM_INFO_FORM;
   var button=document.getElementById("showHideFields");
   if(SHOW_ITEM_INFO_FORM){
+    INFO_BOX.style.height="300px";
     ITEM_INFO_FORM.hidden=false;
     button.innerHTML="Hide";
   }else{
+    INFO_BOX.style.height="20px";
     ITEM_INFO_FORM.hidden=true;
     button.innerHTML="Show";
   }
