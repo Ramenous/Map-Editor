@@ -22,49 +22,7 @@ textarea:focus{
   border: 1px solid #66ccff;
   outline: none;
 }
-.formContainer{
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  position: absolute;
-}
-.formButton{
-  font-size: 16px;
-  width:65px;
-  height:30px;
-  background-color: #999999;
-  border: 1px solid #808080;
-  color:white;
-}
-.buttonContainer, .singleButton{
-  left: 0;
-  right: 0;
-  margin: auto;
-  position: absolute;
-}
-.buttonContainer{
-  text-align: center;
-  width:143px;
-  height: 20px;
-}
-.formButton:hover{
-  background-color: white;
-  color:#999999;
-}
-#addItemForm{
-  width:145px;
-  height:260px;
-}
-#initializeForm{
-  width:140px;
-  height:180px;
-}
-#itemInfoForm{
-  width:140px;
-  height:240px;
-}
+/*Editor / UI CSS*/
 #map {
   position: absolute;
   background-color: #f1f1f1;
@@ -112,6 +70,46 @@ textarea:focus{
   background-color: white;
   border:1px solid black;
 }
+#infoBoxHeader{
+  position: absolute;
+  border:none;
+  top:0;
+  left:0;
+  width:240px;
+  height:30px;
+}
+#infoBoxHeader *{
+  padding:5px;
+}
+/*Form / Prompt CSS*/
+.formContainer{
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+.formButton{
+  font-size: 16px;
+  width:65px;
+  height:30px;
+  background-color: #999999;
+  border: 1px solid #808080;
+  color:white;
+}
+#addItemForm{
+  width:145px;
+  height:260px;
+}
+#initializeForm{
+  width:140px;
+  height:180px;
+}
+#itemInfoForm{
+  width:140px;
+  height:240px;
+}
 .prompt{
   width:200px;
   height:200px;
@@ -140,6 +138,22 @@ textarea:focus{
   background-color: grey;
   opacity: 0.7;
 }
+/*Button CSS*/
+.buttonContainer, .singleButton{
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+.buttonContainer{
+  text-align: center;
+  width:143px;
+  height: 20px;
+}
+.formButton:hover{
+  background-color: white;
+  color:#999999;
+}
 .uiButton, .uiLabel{
   width:50px;
   display:inline-block;
@@ -148,17 +162,6 @@ textarea:focus{
   padding:10px;
   color:white;
   background-color: #999999;
-}
-#infoBoxHeader{
-  position: absolute;
-  border:none;
-  top:0;
-  left:0;
-  width:240px;
-  height:30px;
-}
-#infoBoxHeader *{
-  padding:5px;
 }
 .operatorButton{
   width:40px;
@@ -206,6 +209,7 @@ textarea:focus{
   color: grey;
   background-color: white;
 }
+/*List CSS*/
 .listItem{
   width:inherit;
   height:30px;

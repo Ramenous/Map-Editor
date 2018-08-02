@@ -42,7 +42,7 @@
   <div id="savePrompt" class="prompt" hidden>
     Save As: <input type="text" name="save">
     <button onclick="save(this.parentElement);">Save</button>
-    <button onclick="closePrompt(this.parentElement.id);">Cancel</button>
+    <button onclick="closePrompt('savePrompt');">Cancel</button>
   </div>
   <div id="infoBox" hidden>
     <div id="infoBoxHeader" class="ui">
@@ -54,7 +54,7 @@
       Width (ft): <input type="text" name="width" value="10">
       Length (ft): <input type="text" name="height" value="10">
       Description: <textarea name="description" cols="17" rows="3"></textarea>
-      <button class="formButton singleButton" onclick="updateItemInfo(this.parentElement);">Update</button>
+      <button class="formButton singleButton" onclick="updateItemInfo('itemInfoForm');">Update</button>
     </div>
   </div>
   <div id="addItemPrompt" class="prompt" hidden>
@@ -64,8 +64,8 @@
       Length (ft): <input type="text" name="height" value="10">
       Description: <textarea name="description" cols="17" rows="3"></textarea>
       <div class="buttonContainer">
-        <button class="formButton" onclick="addItem(this.parentElement);">Add</button>
-        <button class="formButton" onclick="closePrompt(this.parentElement.parentElement.parentElement.id);">Cancel</button>
+        <button class="formButton" onclick="addItem('addItemForm');">Add</button>
+        <button class="formButton" onclick="closePrompt('addItemPrompt');">Cancel</button>
       </div>
     </div>
   </div>

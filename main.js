@@ -243,15 +243,11 @@ function getItemFormValues(formEl){
   return formObj;
 }
 
-function addItem(parent){
-  var grandParent=parent.parentElement;
-  var children=grandParent.children;
-  var name=children[0].value;
-  var width=children[1].value;
-  var height=children[2].value;
-  var desc=children[3].value;
-  new Item(name,width,height,desc);
-  closePrompt(grandParent.parentElement.id);
+function addItem(formId){
+  var formEl=document.getElementById(formId);
+  var valObj=getItemFormValues(formEl);
+  new Item(valObj.name,valObj.width,valObj.height,valObj.desc);
+  closePrompt("addItemPrompt");
 }
 
 function deleteItem(){
@@ -382,15 +378,12 @@ function reset(){
   MAP.innerHTML="";
 }
 
-function updateItemInfo(parent){
+function updateItemInfo(formID){
+  var formEl=document.getElementById(formID);
   var itemID=ITEM_ID.innerHTML;
   var item=ITEMS[itemID];
-  var children=parent.children;
-  var updatedName=children[1].value;
-  var updatedWidth=children[2].value;
-  var updatedHeight=children[3].value;
-  var updatedDesc=children[4].value;
-  item.updateItemInfo(updatedName,updatedWidth,updatedHeight,updatedDesc);
+  var valObj=getItemFormValues(formEl);
+  item.updateItemInfo(valObj.name,valObj.width,valObj.height,valObj.desc);
 }
 
 function showHideItemList(){
@@ -437,6 +430,6 @@ function initialize(parent){
   PIXEL_PER_FT=parseInt(scaling);
   MAP.style.width=(parseInt(baseWidth)*PIXEL_PER_FT)+PX;
   MAP.style.height=(parseInt(baseHeight)*PIXEL_PER_FT)+PX;
-  closePrompt(parent.parentElement.id);
+  closePrompt("initializePrompt");
   document.getElementById("editor").hidden=false;
 }
