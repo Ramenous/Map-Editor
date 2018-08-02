@@ -87,7 +87,7 @@ textarea:focus{
 }
 #navUI{
   width:520px;
-  bottom:1px;
+  bottom:0;
   left:0;
 }
 #itemListUI{
