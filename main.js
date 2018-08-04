@@ -41,6 +41,11 @@ const UniqueIDGenerator=function(){
     return getID();
   }
 }
+function extractDimension(el){
+ var width=parseInt(el.style.width.split(PX)[0]);
+ var height=parseInt(el.style.height.split(PX)[0]);
+ return {width:width, height:height};
+}
 const ID_GEN= new UniqueIDGenerator();
 
 function createItemEl(name,id,width,height,color,x,y){
@@ -53,8 +58,8 @@ function createItemEl(name,id,width,height,color,x,y){
   el.style.height=domHeight;
   el.style.maxWidth=domWidth;
   el.style.maxHeight=domHeight;
-  el.style.top=x+PX;
-  el.style.left=y+PX;
+  el.style.top=y+PX;
+  el.style.left=x+PX;
   el.style.backgroundColor=color;
   var nameEl=document.createElement("DIV");
   nameEl.innerHTML=name;
@@ -76,6 +81,23 @@ function createItemEl(name,id,width,height,color,x,y){
   return el;
 }
 
+function getSpawnPos(item){
+  var mapDim=extractDimension(MAP);
+  var mapWidth=mapDim.width;
+  var mapHeight=mapDim.height;
+  var itemWidth=item.width*PIXEL_PER_FT;
+  var itemHeight=item.height*PIXEL_PER_FT;
+  var xPos=(window.innerWidth/2)-itemWidth/2;
+  var yPos=(window.innerHeight/2)-itemHeight/2;
+  var mapX=MAP.offsetLeft;
+  var mapY=MAP.offsetTop;
+  console.log("info", mapX+mapWidth, mapY, itemWidth, itemHeight, mapWidth, mapHeight);
+  return{
+    x:(xPos+itemWidth>mapX+mapWidth)?mapWidth-itemWidth :xPos,
+    y:(yPos+itemHeight>mapY+mapHeight)?mapHeight-itemHeight :yPos
+  };
+}
+
 Item= function(name, width, height,desc, color,x,y){
   this.name=name;
   this.height=parseInt(height);
@@ -85,8 +107,9 @@ Item= function(name, width, height,desc, color,x,y){
   this.isSelected=false;
   this.id=ID_GEN.generate();
   var baseDim=extractDimension(MAP);
-  this.x=(x==null)?(baseDim.width/2)-(this.width/2):x;
-  this.y=(y==null)?(baseDim.height/2)-(this.height/2):y;
+  var spawnPos=getSpawnPos(this);
+  this.x=(x==null)?spawnPos.x:x;
+  this.y=(y==null)?spawnPos.y:y;
   this.domElement=createItemEl(name,this.id,this.width,this.height,this.color,this.x,this.y);
   this.isSelected=false;
   ITEMS[this.id]=this;
@@ -96,8 +119,8 @@ Item= function(name, width, height,desc, color,x,y){
     this.height=height;
     this.desc=desc;
     var el=this.domElement;
-    var domWidth=parseInt(width)*PIXEL_PER_FT
-    var domHeight=parseInt(height)*PIXEL_PER_FT
+    var domWidth=parseInt(width)*PIXEL_PER_FT;
+    var domHeight=parseInt(height)*PIXEL_PER_FT;
     el.children[0].innerHTML=name;
     el.children[1].style.left=domWidth/2;
     el.children[1].innerHTML=width+UNIT;
@@ -129,7 +152,7 @@ function assignListFunc(el, itemObj){
     var children=ITEM_INFO_FORM.children;
     ITEM_ID.innerHTML="ID: "+values[0];
     for(var i=1; i<children.length; i++){
-      children[i].value=values[i];
+      children[i-1].value=values[i];
     }
   }
 }
@@ -137,6 +160,8 @@ function assignListFunc(el, itemObj){
 function setDraggable(el, itemObj) {
   var pos1 = 10, pos2 = 10, pos3 = 10, pos4 = 10;
   el.onmousedown = dragMouseDown;
+  var elDim=extractDimension(el);
+  var mapDim=extractDimension(MAP);
   function dragMouseDown(e) {
     e = e || window.event;
     switch(e.which){
@@ -169,22 +194,39 @@ function setDraggable(el, itemObj) {
         break;
     }
   }
+  function withinMap(){
+    var inHorizontalRange=el.offsetLeft>0 && el.offsetLeft+elDim.width<=mapDim.width;
+    var inVerticalRange=el.offsetTop>0 && el.offsetTop+elDim.height<=mapDim.height;
+    return inHorizontalRange && inVerticalRange;
+  }
   function elDrag(e) {
-    //if(el.offsetTop>0 && el.offsetLeft>0 &&
-      //el.offsetTop+el.height<=MAP.height && el.offsetLeft+el.width<=MAP.width){
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      var top=(el.offsetTop - pos2);
-      var left=(el.offsetLeft - pos1);
-      itemObj.x=left;
-      itemObj.y=top;
-      el.style.top = top + PX;
-      el.style.left = left + PX;
-    //}
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    var top=(el.offsetTop - pos2);
+    var left=(el.offsetLeft - pos1);
+    if(!withinMap()){
+      console.log("OOB", top, left);
+      if(top<0){
+        top=1;
+      }
+      if(top>mapDim.height-el.offsetTop){
+        top=mapDim.height-elDim.height;
+      }
+      if(left<0){
+        left=1;
+      }
+      if(left>mapDim.width-el.offsetLeft){
+        left=mapDim.width-elDim.width;
+      }
+    }
+    el.style.top = top + PX;
+    el.style.left = left + PX;
+    itemObj.x=left;
+    itemObj.y=top;
   }
   function closeDrag() {
     document.onmouseup = null;
@@ -273,7 +315,7 @@ function assignSave(parent,el, key){
     var items=JSON.parse(saveData);
     for(var i in items){
       var item=items[i];
-      new Item(item.name, item.width, item.height, item.color,item.desc,item.x,item.y);
+      new Item(item.name, item.width, item.height, item.desc, item.color,item.x,item.y);
     }
   }
   open.innerHTML="open";
@@ -333,12 +375,6 @@ function displayPrompt(id){
       break;
   }
   SCREEN.hidden=false;
-}
-
-function extractDimension(el){
- var width=parseInt(el.style.width.split(PX)[0]);
- var height=parseInt(el.style.height.split(PX)[0]);
- return {width:width, height:height};
 }
 
 function modScale(isAdd){
