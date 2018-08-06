@@ -91,11 +91,9 @@ function getSpawnPos(item){
   var mapY=MAP.offsetTop;
   var xPos=((window.innerWidth/2)-itemWidth/2)-mapX;
   var yPos=((window.innerHeight/2)-itemHeight/2)-mapY;
-  console.log("xy",((window.innerWidth/2)-itemWidth/2),mapX,((window.innerHeight/2)-itemHeight/2),mapY,xPos, yPos);
-  console.log("info", xPos+itemWidth, mapX+mapWidth,yPos+itemHeight,mapY+mapHeight);
   return{
-    x:(xPos+itemWidth>mapX+mapWidth)?mapWidth-itemWidth :xPos,
-    y:(yPos+itemHeight>mapY+mapHeight)?mapHeight-itemHeight :yPos
+    x:(xPos>mapWidth)?mapWidth-itemWidth :xPos,
+    y:(yPos>mapHeight)?mapHeight-itemHeight :yPos
   };
 }
 
