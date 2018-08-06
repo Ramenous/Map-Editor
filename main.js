@@ -9,7 +9,7 @@ const INFO_BOX=document.getElementById("infoBox");
 const ITEM_INFO_FORM=document.getElementById("itemInfoForm");
 const PX="px";
 const UNIT="ft";
-var NAVIGATE_SPEED=10;
+var NAVIGATE_SPEED=50;
 var PIXEL_PER_FT=1;
 var SELECTED_ITEMS={};
 var SHOW_ITEM_LIST=false;
@@ -87,11 +87,12 @@ function getSpawnPos(item){
   var mapHeight=mapDim.height;
   var itemWidth=item.width*PIXEL_PER_FT;
   var itemHeight=item.height*PIXEL_PER_FT;
-  var xPos=(window.innerWidth/2)-itemWidth/2;
-  var yPos=(window.innerHeight/2)-itemHeight/2;
   var mapX=MAP.offsetLeft;
   var mapY=MAP.offsetTop;
-  console.log("info", mapX+mapWidth, mapY, itemWidth, itemHeight, mapWidth, mapHeight);
+  var xPos=((window.innerWidth/2)-itemWidth/2)-mapX;
+  var yPos=((window.innerHeight/2)-itemHeight/2)-mapY;
+  console.log("xy",((window.innerWidth/2)-itemWidth/2),mapX,((window.innerHeight/2)-itemHeight/2),mapY,xPos, yPos);
+  console.log("info", xPos+itemWidth, mapX+mapWidth,yPos+itemHeight,mapY+mapHeight);
   return{
     x:(xPos+itemWidth>mapX+mapWidth)?mapWidth-itemWidth :xPos,
     y:(yPos+itemHeight>mapY+mapHeight)?mapHeight-itemHeight :yPos
@@ -256,11 +257,6 @@ function closePrompt(id){
   SCREEN.hidden=true;
 }
 
-function saveMap(parent){
-  var name=parent.children[0].value;
-  localStorage.setItem(name, MAP);
-}
-
 function getItemFormValues(formEl){
   var children=formEl.children;
   var formObj={};
@@ -312,11 +308,14 @@ function assignSave(parent,el, key){
   open.onclick=function(){
     MAP.innerHTML="";
     ITEMS={};
-    var items=JSON.parse(saveData);
-    for(var i in items){
-      var item=items[i];
+    var save=JSON.parse(saveData);
+    for(var i in save.items){
+      var item=save.items[i];
       new Item(item.name, item.width, item.height, item.desc, item.color,item.x,item.y);
     }
+    MAP.style.width=save.mapDim.width+"px";
+    MAP.style.height=save.mapDim.height+"px";
+    closePrompt("loadSavePrompt");
   }
   open.innerHTML="open";
   var delSave=document.createElement("BUTTON");
@@ -356,7 +355,12 @@ function loadSave(parent){
 
 function save(parent){
   var saveName=parent.children[0].value;
-  localStorage.setItem(saveName,JSON.stringify(ITEMS));
+  var mapDim=extractDimension(MAP);
+  var save={
+    items:ITEMS,
+    mapDim:mapDim
+  };
+  localStorage.setItem(saveName,JSON.stringify(save));
   closePrompt(parent.id);
 }
 
