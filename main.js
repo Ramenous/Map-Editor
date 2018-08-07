@@ -15,6 +15,7 @@ var SELECTED_ITEMS={};
 var SHOW_ITEM_LIST=false;
 var SHOW_ITEM_INFO_FORM=true;
 var ITEMS={};
+var ITEM_ORDER=[];
 var COLORS=[
   "#99cc00",
   "#999966",
@@ -92,8 +93,8 @@ function getSpawnPos(item){
   var xPos=((window.innerWidth/2)-itemWidth/2)-mapX;
   var yPos=((window.innerHeight/2)-itemHeight/2)-mapY;
   return{
-    x:(xPos>mapWidth)?mapWidth-itemWidth :xPos,
-    y:(yPos>mapHeight)?mapHeight-itemHeight :yPos
+    x:(xPos+itemWidth>mapWidth)?mapWidth-itemWidth :xPos,
+    y:(yPos+itemHeight>mapHeight)?mapHeight-itemHeight :yPos
   };
 }
 
@@ -112,6 +113,7 @@ Item= function(name, width, height,desc, color,x,y){
   this.domElement=createItemEl(name,this.id,this.width,this.height,this.color,this.x,this.y);
   this.isSelected=false;
   ITEMS[this.id]=this;
+  ITEM_ORDER.push(this);
   this.updateItemInfo=(name, width, height, desc)=>{
     this.name=name;
     this.width=width;
@@ -120,6 +122,7 @@ Item= function(name, width, height,desc, color,x,y){
     var el=this.domElement;
     var domWidth=parseInt(width)*PIXEL_PER_FT;
     var domHeight=parseInt(height)*PIXEL_PER_FT;
+    console.log(width, height);
     el.children[0].innerHTML=name;
     el.children[1].style.left=domWidth/2;
     el.children[1].innerHTML=width+UNIT;
@@ -129,7 +132,6 @@ Item= function(name, width, height,desc, color,x,y){
     el.style.height=domHeight+PX;
     el.style.maxWidth=domWidth+PX;
     el.style.maxHeight=domHeight+PX;
-
   }
   setDraggable(this.domElement, this);
   MAP.appendChild(this.domElement);
@@ -156,11 +158,19 @@ function assignListFunc(el, itemObj){
   }
 }
 
+function deselectItem(itemID){
+  var item=ITEMS[itemID];
+  console.log(item);
+  delete SELECTED_ITEMS[item.id];
+  var listItem=document.getElementById("listItem"+itemID);
+  ITEM_LIST.removeChild(listItem);
+  INFO_BOX.hidden=true;
+  item.domElement.style.border="1px solid black";
+}
+
 function setDraggable(el, itemObj) {
   var pos1 = 10, pos2 = 10, pos3 = 10, pos4 = 10;
   el.onmousedown = dragMouseDown;
-  var elDim=extractDimension(el);
-  var mapDim=extractDimension(MAP);
   function dragMouseDown(e) {
     e = e || window.event;
     switch(e.which){
@@ -181,24 +191,21 @@ function setDraggable(el, itemObj) {
           item.domElement.style.border="2px solid green";
           DELETE_BUTTON.disabled=false;
         }else{
-          delete SELECTED_ITEMS[item.id];
-          var listItem=document.getElementById("listItem"+itemObj.id);
-          ITEM_LIST.removeChild(listItem);
-          INFO_BOX.hidden=true;
-          item.domElement.style.border="1px solid black";
-          DELETE_BUTTON.disabled=true;
+          deselectItem(itemObj.id);
         }
         var itemAmt=Object.keys(SELECTED_ITEMS).length;
         DELETE_BUTTON.innerHTML=(itemAmt==0)?"Delete":"Delete ("+itemAmt+")";
         break;
     }
   }
-  function withinMap(){
+  function withinMap(elDim,mapDim){
     var inHorizontalRange=el.offsetLeft>0 && el.offsetLeft+elDim.width<=mapDim.width;
     var inVerticalRange=el.offsetTop>0 && el.offsetTop+elDim.height<=mapDim.height;
     return inHorizontalRange && inVerticalRange;
   }
   function elDrag(e) {
+    var elDim=extractDimension(el);
+    var mapDim=extractDimension(MAP);
     e = e || window.event;
     e.preventDefault();
     pos1 = pos3 - e.clientX;
@@ -207,18 +214,18 @@ function setDraggable(el, itemObj) {
     pos4 = e.clientY;
     var top=(el.offsetTop - pos2);
     var left=(el.offsetLeft - pos1);
-    if(!withinMap()){
+    if(!withinMap(elDim, mapDim)){
       console.log("OOB", top, left);
       if(top<0){
         top=1;
       }
-      if(top>mapDim.height-el.offsetTop){
+      if(top+elDim.height>mapDim.height){
         top=mapDim.height-elDim.height;
       }
       if(left<0){
         left=1;
       }
-      if(left>mapDim.width-el.offsetLeft){
+      if(left+elDim.width>mapDim.width){
         left=mapDim.width-elDim.width;
       }
     }
@@ -290,9 +297,11 @@ function deleteItem(){
   for(var i in SELECTED_ITEMS){
     var item=SELECTED_ITEMS[i];
     MAP.removeChild(item.domElement);
+    deselectItem(item.id);
     delete ITEMS[item.id];
+    var ind=ITEM_ORDER.indexOf(item);
+    ITEM_ORDER.splice(ind,1);
   }
-  SELECTED_ITEMS={};
   DELETE_BUTTON.innerHTML="Delete";
 }
 
@@ -306,6 +315,7 @@ function assignSave(parent,el, key){
   open.onclick=function(){
     MAP.innerHTML="";
     ITEMS={};
+    ITEM_ORDER=[];
     var save=JSON.parse(saveData);
     for(var i in save.items){
       var item=save.items[i];
@@ -355,7 +365,7 @@ function save(parent){
   var saveName=parent.children[0].value;
   var mapDim=extractDimension(MAP);
   var save={
-    items:ITEMS,
+    items:ITEM_ORDER,
     mapDim:mapDim
   };
   localStorage.setItem(saveName,JSON.stringify(save));
@@ -418,8 +428,10 @@ function reset(){
 
 function updateItemInfo(formID){
   var formEl=document.getElementById(formID);
-  var itemID=ITEM_ID.innerHTML;
+  var itemID=ITEM_ID.innerHTML.split("ID: ")[1];
   var item=ITEMS[itemID];
+  console.log(itemID, ITEMS);
+  console.log(item);
   var valObj=getItemFormValues(formEl);
   item.updateItemInfo(valObj.name,valObj.width,valObj.height,valObj.desc);
 }
