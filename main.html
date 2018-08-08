@@ -38,6 +38,9 @@
     </div>
   </div>
   <div id="loadSavePrompt" class="prompt" hidden>
+    <div id="loadSaveForm" class="formContainer">
+      <div id="saveContainer"></div>
+    </div>
   </div>
   <div id="savePrompt" class="prompt" hidden>
     Save As: <input type="text" name="save">
@@ -62,7 +65,7 @@
       Name: <input type="text" name="name" value="table">
       Width (ft): <input type="text" name="width" value="10">
       Length (ft): <input type="text" name="height" value="10">
-      Description: <textarea name="description" cols="17" rows="3"></textarea>
+      Description: <textarea name="description" cols="19" rows="3"></textarea>
       <div class="buttonContainer">
         <button class="formButton" onclick="addItem('addItemForm');">Add</button>
         <button class="formButton" onclick="closePrompt('addItemPrompt');">Cancel</button>

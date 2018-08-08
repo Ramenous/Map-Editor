@@ -339,25 +339,38 @@ function assignSave(parent,el, key){
 }
 
 function loadSave(parent){
+  var formContainer=parent.children[0];
+  var saveContainer=formContainer.children[0];
   if(localStorage.length>0){
-    parent.innerHTML="";
-    parent.style.overflowY="scroll";
-    parent.style.overflowX="hidden";
+    saveContainer.innerHTML="";
+    saveContainer.style.overflowY="scroll";
+    saveContainer.style.overflowX="hidden";
     for(var i=0; i<localStorage.length; i++){
       var el=document.createElement("DIV");
       el.className="save";
       var key=localStorage.key(i);
       assignSave(parent,el, key);
-      parent.appendChild(el);
+      saveContainer.appendChild(el);
     }
     var cancel=document.createElement("BUTTON");
     cancel.innerHTML="Cancel";
+    var clearAll=document.createElement("BUTTON");
+    clearAll.innerHTML="Clear";
+    cancel.className="formButton";
+    clearAll.className="formButton";
     cancel.onclick=function(){
       closePrompt(parent.id);
     }
-    parent.appendChild(cancel);
+    clearAll.onclick=function(){
+      localStorage.clear();
+    }
+    var container=document.createElement("DIV");
+    container.className="buttonContainer";
+    container.appendChild(clearAll);
+    container.appendChild(cancel);
+    formContainer.appendChild(container);
   }else{
-    parent.innerHTML="No saves currently";
+    formContainer.innerHTML="No saves currently";
   }
 }
 
