@@ -456,7 +456,7 @@ function showHideInfoFields(){
     ITEM_INFO_FORM.hidden=false;
     button.innerHTML="Hide";
   }else{
-    INFO_BOX.style.height="20px";
+    INFO_BOX.style.height="10px";
     ITEM_INFO_FORM.hidden=true;
     button.innerHTML="Show";
   }
