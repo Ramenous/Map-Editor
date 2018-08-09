@@ -39,7 +39,7 @@ textarea:focus{
   border: 1px solid #808080;
 }
 #editUI{
-  width:700px;
+  width:500px;
   top:0;
   left:0;
 }

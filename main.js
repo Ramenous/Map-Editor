@@ -407,8 +407,12 @@ function modScale(isAdd){
   PIXEL_PER_FT+=(isAdd)?1:-1;
   PIXEL.innerHTML=PIXEL_PER_FT;
   var mapDim=extractDimension(MAP);
-  MAP.style.width=(mapDim.width/oldScale)*PIXEL_PER_FT+PX;
-  MAP.style.height=(mapDim.height/oldScale)*PIXEL_PER_FT+PX;
+  var oldMapWidth=mapDim.width;
+  var oldMapHeight=mapDim.height;
+  var newMapWidth=(mapDim.width/oldScale)*PIXEL_PER_FT;
+  var newMapHeight=(mapDim.height/oldScale)*PIXEL_PER_FT;
+  MAP.style.width=newMapWidth;
+  MAP.style.height=newMapHeight;
   var children=MAP.children;
   for(var i=0;i<children.length; i++){
     var child=children[i];
@@ -417,6 +421,10 @@ function modScale(isAdd){
     var actualHeight=childDim.height/oldScale;
     var newWidth=(childDim.width/oldScale)*PIXEL_PER_FT;
     var newHeight=(childDim.height/oldScale)*PIXEL_PER_FT;
+    var widthDifference=newWidth-(childDim.width);
+    var heightDifference=newHeight-(childDim.height);
+    child.style.left=(child.offsetLeft*newMapWidth)/oldMapWidth+PX;
+    child.style.top=(child.offsetTop*newMapHeight)/oldMapHeight+PX;
     child.style.maxWidth=newWidth+PX;
     child.style.maxHeight=newHeight+PX;
     child.style.width=newWidth+PX;
