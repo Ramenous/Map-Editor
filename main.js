@@ -7,6 +7,7 @@ const ITEM_LIST=document.getElementById("itemList");
 const DELETE_BUTTON=document.getElementById("delete");
 const INFO_BOX=document.getElementById("infoBox");
 const ITEM_INFO_FORM=document.getElementById("itemInfoForm");
+const SAVE_PROMPT=document.getElementById("savePrompt");
 const PX="px";
 const UNIT="ft";
 var NAVIGATE_SPEED=50;
@@ -16,6 +17,7 @@ var SHOW_ITEM_LIST=false;
 var SHOW_ITEM_INFO_FORM=true;
 var ITEMS={};
 var ITEM_ORDER=[];
+var SAVE_NAME;
 var COLORS=[
   "#99cc00",
   "#999966",
@@ -160,7 +162,6 @@ function assignListFunc(el, itemObj){
 
 function deselectItem(itemID){
   var item=ITEMS[itemID];
-  console.log(item);
   delete SELECTED_ITEMS[item.id];
   var listItem=document.getElementById("listItem"+itemID);
   ITEM_LIST.removeChild(listItem);
@@ -240,23 +241,6 @@ function setDraggable(el, itemObj) {
   }
 }
 
-document.onkeydown = function(event){
-  switch(event.keyCode){
-    case 38:
-      MAP.style.top=MAP.offsetTop-NAVIGATE_SPEED +PX;
-      break;
-    case 37:
-      MAP.style.left=MAP.offsetLeft-NAVIGATE_SPEED +PX;
-      break;
-    case 40:
-      MAP.style.top=MAP.offsetTop+NAVIGATE_SPEED +PX;
-      break;
-    case 39:
-      MAP.style.left=MAP.offsetLeft+NAVIGATE_SPEED + PX;
-      break;
-  }
-}
-
 function closePrompt(id){
   document.getElementById(id).hidden=true;
   SCREEN.hidden=true;
@@ -316,6 +300,7 @@ function assignSave(parent,el, key){
     MAP.innerHTML="";
     ITEMS={};
     ITEM_ORDER=[];
+    SAVE_NAME=key;
     var save=JSON.parse(saveData);
     for(var i in save.items){
       var item=save.items[i];
@@ -374,8 +359,9 @@ function loadSave(parent){
   }
 }
 
-function save(parent){
-  var saveName=parent.children[0].value;
+function save(){
+  var saveNameInputVal=document.getElementById("saveNameInput").value;
+  var saveName=(SAVE_NAME!=null)?SAVE_NAME:saveNameInputVal;
   var mapDim=extractDimension(MAP);
   var save={
     items:ITEM_ORDER,
@@ -391,7 +377,7 @@ function displayPrompt(id){
       document.getElementById("addItemPrompt").hidden=false;
       break;
     case "save":
-      document.getElementById("savePrompt").hidden=false;
+      SAVE_PROMPT.hidden=false;
       break;
     case "loadSave":
       var prompt=document.getElementById("loadSavePrompt");
@@ -451,8 +437,6 @@ function updateItemInfo(formID){
   var formEl=document.getElementById(formID);
   var itemID=ITEM_ID.innerHTML.split("ID: ")[1];
   var item=ITEMS[itemID];
-  console.log(itemID, ITEMS);
-  console.log(item);
   var valObj=getItemFormValues(formEl);
   item.updateItemInfo(valObj.name,valObj.width,valObj.height,valObj.desc);
 }
@@ -489,6 +473,23 @@ function center(){
   var mapDim=extractDimension(MAP);
   MAP.style.top=(parseInt(height)/2)-(mapDim.height/2)+PX;
   MAP.style.left=(parseInt(width)/2)-(mapDim.width/2)+PX;
+}
+
+document.onkeydown = function(event){
+  switch(event.keyCode){
+    case 38:
+      MAP.style.top=MAP.offsetTop-NAVIGATE_SPEED +PX;
+      break;
+    case 37:
+      MAP.style.left=MAP.offsetLeft-NAVIGATE_SPEED +PX;
+      break;
+    case 40:
+      MAP.style.top=MAP.offsetTop+NAVIGATE_SPEED +PX;
+      break;
+    case 39:
+      MAP.style.left=MAP.offsetLeft+NAVIGATE_SPEED + PX;
+      break;
+  }
 }
 
 function initialize(parent){

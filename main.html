@@ -42,9 +42,14 @@
     </div>
   </div>
   <div id="savePrompt" class="prompt" hidden>
-    Save As: <input type="text" name="save">
-    <button onclick="save(this.parentElement);">Save</button>
-    <button onclick="closePrompt('savePrompt');">Cancel</button>
+    <div class="formContainer" id="saveForm">
+      Save As: <input type="text" id="saveNameInput" name="save">
+      <div class="buttonContainer">
+        <button class="formButton" onclick="save();">Save</button>
+        <button class="formButton" onclick="closePrompt('savePrompt');">Cancel</button>
+      </div>
+      <button class="formButton singleButton" style="width:120px;">Update Save</button>
+    </div>
   </div>
   <div id="infoBox" hidden>
     <div id="infoBoxHeader" class="ui">
