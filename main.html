@@ -6,8 +6,10 @@
 <body oncontextmenu="return false;">
   <div id="screen" hidden></div>
   <div id="editor" hidden>
+    <!--Map/Base to add/del items-->
     <div id="map">
     </div>
+    <!--Navigation UI for editing the map (add/del/save,etc)-->
     <div class="ui" id="editUI">
       <div class="uiButton" id="reset" onclick="reset();">Reset</div>
       <div class="uiButton" id="center" onclick="center();">Center</div>
@@ -16,7 +18,8 @@
       <div class="uiButton" id="save" onclick="displayPrompt(this.id);">Save</div>
       <div class="uiButton longButton" id="loadSave" onclick="displayPrompt(this.id);">Load Save</div>
     </div>
-    <div class="ui" id="navUI">
+    <!--Scaling UI that allows client to change scaling and move speed of the map-->
+    <div class="ui" id="scaleUI">
       <div class="uiButton operatorButton" onclick="modScale(true);" id="addScale">+</div>
       <div class="uiButton operatorButton" onclick="modScale(false);" id="delScale">-</div>
       <div class="uiLabel longLabel" id="scale">
@@ -28,6 +31,7 @@
         Move by <div id="speedAmt" class="counter"></div> pixels
       </div>
     </div>
+    <!--List UI that displays names and IDs of all selected items-->
     <div id="itemListUI">
       <div class="ui">
         <div class="uiLabel longLabel" id="items">Selected Items</div>
@@ -41,6 +45,7 @@
       <div id="saveContainer"></div>
     </div>
   </div>
+  <!--Prompt for saving a current map-->
   <div id="savePrompt" class="prompt" hidden>
     <div class="formContainer" id="saveForm">
       Save As: <input type="text" id="saveNameInput" name="save">
@@ -48,34 +53,40 @@
         <button class="formButton" onclick="save();">Save</button>
         <button class="formButton" onclick="closePrompt('savePrompt');">Cancel</button>
       </div>
-      <button class="formButton singleButton" style="width:120px;">Update Save</button>
+      <button class="formButton singleButton" style="width:120px; bottom:0;">Update Save</button>
     </div>
   </div>
+  <!--Information box that displays the editable information of a selected item-->
   <div id="infoBox" hidden>
+    <!--Header for the Information Box; displays item ID and a show/hide option-->
     <div id="infoBoxHeader" class="ui">
       <div id="itemID" class="uiLabel" style="width:150px;"></div>
       <div id="showHideFields" class="uiButton" onclick="showHideInfoFields();">Hide</div>
     </div>
+    <!--Editable fields that display the information of the seledted item-->
     <div class="formContainer" id="itemInfoForm">
       Name: <input type="text" name="name" value="table">
       Width (ft): <input type="text" name="width" value="10">
       Length (ft): <input type="text" name="height" value="10">
-      Description: <textarea name="description" cols="17" rows="3"></textarea>
-      <button class="formButton singleButton" onclick="updateItemInfo('itemInfoForm');">Update</button>
+      Description: <textarea name="description" cols="20" rows="3"></textarea>
+      <button class="formButton singleButton" style="bottom:0;" onclick="updateItemInfo('itemInfoForm');">Update</button>
     </div>
   </div>
+  <!--Prompt for adding items-->
   <div id="addItemPrompt" class="prompt" hidden>
     <div class="formContainer" id="addItemForm">
       Name: <input type="text" name="name" value="table">
       Width (ft): <input type="text" name="width" value="10">
       Length (ft): <input type="text" name="height" value="10">
       Description: <textarea name="description" cols="19" rows="3"></textarea>
+      <!--Add & Cancel buttons for the prompt-->
       <div class="buttonContainer">
         <button class="formButton" onclick="addItem('addItemForm');">Add</button>
         <button class="formButton" onclick="closePrompt('addItemPrompt');">Cancel</button>
       </div>
     </div>
   </div>
+  <!--Prompt for initializing the dimensions and scaling for the map (Base where items will be inserted)-->
   <div id="initializePrompt" class="prompt">
     <div class="formContainer" id="initializeForm">
       Base Width (ft): <input type="text" name="baseWidth" value="100">

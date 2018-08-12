@@ -30,6 +30,9 @@ var COLORS=[
   "#ffffff",
   "#ffcc99"
 ];
+/**
+  Generator that creates a unique ID
+**/
 const UniqueIDGenerator=function(){
   var usedIDs={};
   function getID(){
@@ -44,13 +47,27 @@ const UniqueIDGenerator=function(){
     return getID();
   }
 }
+/**
+  extracts width and height of a dom element as an integer
+  @return {object} object containing width and height
+**/
 function extractDimension(el){
  var width=parseInt(el.style.width.split(PX)[0]);
  var height=parseInt(el.style.height.split(PX)[0]);
  return {width:width, height:height};
 }
 const ID_GEN= new UniqueIDGenerator();
-
+/**
+  Creates dom Element that represents the item object
+  @param {string} name - item name
+  @param {string} id - item id
+  @param {string} width - actual item width
+  @param {string} height - actual item height
+  @param {string} desc - item description
+  @param {string} color - color of the item element
+  @param {string} x - the x position of the element on the map
+  @param {string} y - the y position of the element on the map
+**/
 function createItemEl(name,id,width,height,color,x,y){
   var el=document.createElement("DIV");
   el.className="item";
@@ -83,7 +100,10 @@ function createItemEl(name,id,width,height,color,x,y){
   el.appendChild(heightEl);
   return el;
 }
-
+/**
+  Gets a proper spawn position of a newly create item
+  @param {object} item - item object
+**/
 function getSpawnPos(item){
   var mapDim=extractDimension(MAP);
   var mapWidth=mapDim.width;
@@ -99,7 +119,17 @@ function getSpawnPos(item){
     y:(yPos+itemHeight>mapHeight)?mapHeight-itemHeight :yPos
   };
 }
-
+/**
+ Creates a new item object which represent items that will be placed
+ on the map
+ @param {string} name - item name
+ @param {string} width - actual item width
+ @param {string} height - actual item height
+ @param {string} desc - item description
+ @param {string} color - color of the item element
+ @param {string} x - the x position of the element on the map
+ @param {string} y - the y position of the element on the map
+**/
 Item= function(name, width, height,desc, color,x,y){
   this.name=name;
   this.height=parseInt(height);
@@ -138,8 +168,12 @@ Item= function(name, width, height,desc, color,x,y){
   setDraggable(this.domElement, this);
   MAP.appendChild(this.domElement);
 }
-
-function assignListFunc(el, itemObj){
+/**
+  Creates a selected item tab for the selected items list
+  @param {object} el - the tab element which holds item's name and id
+  @param {object} itemObj - the item object
+**/
+function createListTab(el, itemObj){
   el.className="listItem";
   el.innerHTML="#"+itemObj.id+" - "+itemObj.name;
   el.id="listItem"+itemObj.id;
@@ -159,7 +193,10 @@ function assignListFunc(el, itemObj){
     }
   }
 }
-
+/**
+  Deselects an item
+  @param {string} itemID - the id of the item
+**/
 function deselectItem(itemID){
   var item=ITEMS[itemID];
   delete SELECTED_ITEMS[item.id];
@@ -168,10 +205,19 @@ function deselectItem(itemID){
   INFO_BOX.hidden=true;
   item.domElement.style.border="1px solid black";
 }
-
+/**
+  Sets an item to be a draggable element
+  @param {object} el- the dom element equivalent of an object
+  @param {object} itemObj - an item object
+**/
 function setDraggable(el, itemObj) {
   var pos1 = 10, pos2 = 10, pos3 = 10, pos4 = 10;
   el.onmousedown = dragMouseDown;
+  /**
+    Selects items when it is a right click
+    Selects item to drag when left click
+    @param {object} e- event
+  **/
   function dragMouseDown(e) {
     e = e || window.event;
     switch(e.which){
@@ -187,7 +233,7 @@ function setDraggable(el, itemObj) {
         if(item.isSelected){
           SELECTED_ITEMS[this.id]=item;
           var el=document.createElement("DIV");
-          assignListFunc(el,item);
+          createListTab(el,item);
           ITEM_LIST.appendChild(el);
           item.domElement.style.border="2px solid green";
           DELETE_BUTTON.disabled=false;
@@ -199,11 +245,20 @@ function setDraggable(el, itemObj) {
         break;
     }
   }
+  /**
+    Checks if element is within map
+    @param {object} elDim - object containing item element's dimensions
+    @param {object} mapDim - object containing map element's dimensions
+  **/
   function withinMap(elDim,mapDim){
     var inHorizontalRange=el.offsetLeft>0 && el.offsetLeft+elDim.width<=mapDim.width;
     var inVerticalRange=el.offsetTop>0 && el.offsetTop+elDim.height<=mapDim.height;
     return inHorizontalRange && inVerticalRange;
   }
+  /**
+    Drags the element
+    @param {object?} e - event
+  **/
   function elDrag(e) {
     var elDim=extractDimension(el);
     var mapDim=extractDimension(MAP);
@@ -235,17 +290,26 @@ function setDraggable(el, itemObj) {
     itemObj.x=left;
     itemObj.y=top;
   }
+  /**
+    stops the drag
+  **/
   function closeDrag() {
     document.onmouseup = null;
     document.onmousemove = null;
   }
 }
-
+/**
+ Closes a prompt with the given id
+ @param {string} id - the id of the prompt that is to be closed
+**/
 function closePrompt(id){
   document.getElementById(id).hidden=true;
   SCREEN.hidden=true;
 }
-
+/**
+  Retrieves item values from the form element
+  @param {object} formEl - the form element containing item values
+**/
 function getItemFormValues(formEl){
   var children=formEl.children;
   var formObj={};
@@ -269,14 +333,19 @@ function getItemFormValues(formEl){
   }
   return formObj;
 }
-
-function addItem(formId){
-  var formEl=document.getElementById(formId);
+/**
+  Adds items
+  @param {string} formID - the form element's id to get the values
+**/
+function addItem(formID){
+  var formEl=document.getElementById(formID);
   var valObj=getItemFormValues(formEl);
   new Item(valObj.name,valObj.width,valObj.height,valObj.desc);
   closePrompt("addItemPrompt");
 }
-
+/**
+  Deletes selected items
+**/
 function deleteItem(){
   for(var i in SELECTED_ITEMS){
     var item=SELECTED_ITEMS[i];
@@ -288,8 +357,14 @@ function deleteItem(){
   }
   DELETE_BUTTON.innerHTML="Delete";
 }
-
-function assignSave(parent,el, key){
+/**
+  Creates a save tab that displays the save name and
+  options to open or delete it
+  @param {object} parent- the container element that contains the saves
+  @param {object} el- the save tab element which contains save name and options
+  @param {string} key - the name of the save
+**/
+function createSave(parent, el, key){
   var saveData=localStorage.getItem(key);
   var saveName=document.createElement("DIV");
   saveName.className="saveName";
@@ -322,19 +397,26 @@ function assignSave(parent,el, key){
   el.appendChild(open);
   el.appendChild(delSave);
 }
-
+/**
+  Loads all localStorage saves of saved Maps onto
+  a designated save container along with options to
+  open or delete that save.
+  @param {object} parent - the container element that holds all elements of
+  a load save prompt
+**/
 function loadSave(parent){
   var formContainer=parent.children[0];
   var saveContainer=formContainer.children[0];
+  function empty(){
+    formContainer.innerHTML="No saves currently";
+  }
   if(localStorage.length>0){
     saveContainer.innerHTML="";
-    saveContainer.style.overflowY="scroll";
-    saveContainer.style.overflowX="hidden";
     for(var i=0; i<localStorage.length; i++){
       var el=document.createElement("DIV");
       el.className="save";
       var key=localStorage.key(i);
-      assignSave(parent,el, key);
+      createSave(parent,el, key);
       saveContainer.appendChild(el);
     }
     var cancel=document.createElement("BUTTON");
@@ -348,6 +430,7 @@ function loadSave(parent){
     }
     clearAll.onclick=function(){
       localStorage.clear();
+      empty();
     }
     var container=document.createElement("DIV");
     container.className="buttonContainer";
@@ -355,10 +438,12 @@ function loadSave(parent){
     container.appendChild(cancel);
     formContainer.appendChild(container);
   }else{
-    formContainer.innerHTML="No saves currently";
+    empty();
   }
 }
-
+/**
+  Saves the current map and the items (children) within it
+**/
 function save(){
   var saveNameInputVal=document.getElementById("saveNameInput").value;
   var saveName=(SAVE_NAME!=null)?SAVE_NAME:saveNameInputVal;
@@ -368,9 +453,12 @@ function save(){
     mapDim:mapDim
   };
   localStorage.setItem(saveName,JSON.stringify(save));
-  closePrompt(parent.id);
+  closePrompt(SAVE_PROMPT.id);
 }
-
+/**
+  Displays the prompt with the given id
+  @param {string} id - the id of the prompt element to be displayed
+**/
 function displayPrompt(id){
   switch(id){
     case "add":
@@ -388,6 +476,11 @@ function displayPrompt(id){
   SCREEN.hidden=false;
 }
 
+/**
+  Modifies the scaling of the map and its items (children)
+  based on the modified amount of pixel per actual feet of the item/map
+  @param {boolean} isAdd - whether or not client wants to add / del a pixel from the scale
+**/
 function modScale(isAdd){
   var oldScale=PIXEL_PER_FT;
   PIXEL_PER_FT+=(isAdd)?1:-1;
@@ -424,15 +517,26 @@ function modScale(isAdd){
   }
 }
 
+/**
+  Modifies the speed of the movement of the map
+  @param {boolean} isAdd - whether or not client wants to increase/decrease speed
+**/
 function modMoveSpd(isAdd){
   NAVIGATE_SPEED+=(isAdd)?1:-1;
   SPEED.innerHTML=NAVIGATE_SPEED;
 }
 
+/**
+  Clears all items in the map
+**/
 function reset(){
   MAP.innerHTML="";
 }
 
+/**
+  Updates the selected item's information
+  @param {string} formID - the id of the form element that contains the updated item info
+**/
 function updateItemInfo(formID){
   var formEl=document.getElementById(formID);
   var itemID=ITEM_ID.innerHTML.split("ID: ")[1];
@@ -441,6 +545,9 @@ function updateItemInfo(formID){
   item.updateItemInfo(valObj.name,valObj.width,valObj.height,valObj.desc);
 }
 
+/**
+  Toggles between showing and hiding the list of selected items
+**/
 function showHideItemList(){
   SHOW_ITEM_LIST=!SHOW_ITEM_LIST;
   var button=document.getElementById("showHideList");
@@ -453,6 +560,9 @@ function showHideItemList(){
   }
 }
 
+/**
+  Toggles between showing and hiding the selected item's information box
+**/
 function showHideInfoFields(){
   SHOW_ITEM_INFO_FORM=!SHOW_ITEM_INFO_FORM;
   var button=document.getElementById("showHideFields");
@@ -467,6 +577,9 @@ function showHideInfoFields(){
   }
 }
 
+/**
+  Centers the map at the middle of the window;
+**/
 function center(){
   var width=window.innerWidth || document.body.clientWidth;
   var height= window.innerHeight || document.body.clientHeight;
@@ -475,6 +588,10 @@ function center(){
   MAP.style.left=(parseInt(width)/2)-(mapDim.width/2)+PX;
 }
 
+/**
+  Moves map based on key pressed (up/down/left/right)
+  @param {idk} event - keypress
+**/
 document.onkeydown = function(event){
   switch(event.keyCode){
     case 38:
@@ -491,7 +608,10 @@ document.onkeydown = function(event){
       break;
   }
 }
-
+/**
+  Initializes editor and Map based on chosen values
+  @param {object} parent - the initialize prompt element that contains map values
+**/
 function initialize(parent){
   var children=parent.children;
   var baseWidth=children[0].value;
