@@ -32,6 +32,7 @@ var COLORS=[
 ];
 /**
   Generator that creates a unique ID
+  @return {integer} unique id
 **/
 const UniqueIDGenerator=function(){
   var usedIDs={};
@@ -67,6 +68,7 @@ const ID_GEN= new UniqueIDGenerator();
   @param {string} color - color of the item element
   @param {string} x - the x position of the element on the map
   @param {string} y - the y position of the element on the map
+  @return {object} newly created dom Element that represents an item
 **/
 function createItemEl(name,id,width,height,color,x,y){
   var el=document.createElement("DIV");
@@ -103,6 +105,7 @@ function createItemEl(name,id,width,height,color,x,y){
 /**
   Gets a proper spawn position of a newly create item
   @param {object} item - item object
+  @return {object} item spawn x coordinate and item spawn y coordinate
 **/
 function getSpawnPos(item){
   var mapDim=extractDimension(MAP);
@@ -249,6 +252,7 @@ function setDraggable(el, itemObj) {
     Checks if element is within map
     @param {object} elDim - object containing item element's dimensions
     @param {object} mapDim - object containing map element's dimensions
+    @return true if item element is within the ranges of the map, false otherwise
   **/
   function withinMap(elDim,mapDim){
     var inHorizontalRange=el.offsetLeft>0 && el.offsetLeft+elDim.width<=mapDim.width;
@@ -309,6 +313,7 @@ function closePrompt(id){
 /**
   Retrieves item values from the form element
   @param {object} formEl - the form element containing item values
+  @return {object} an object which holds all item values from the form element
 **/
 function getItemFormValues(formEl){
   var children=formEl.children;
